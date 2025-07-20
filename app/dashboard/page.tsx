@@ -35,6 +35,7 @@ import { ScienceLabModal } from "@/components/modals/science-lab-modal"
 import { LessonPlanModal } from "@/components/modals/lesson-plan-modal"
 import { QuizModal } from "@/components/modals/quiz-modal"
 import { InstructionalSequenceModal } from "@/components/modals/instructional-sequence-modal"
+import { QuestionBankModal } from "@/components/modals/question-bank-modal"
 import { Chatbot } from "@/components/chatbot"
 
 export default function DashboardPage() {
@@ -44,11 +45,12 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("home")
   const [generatedContent, setGeneratedContent] = useState<any[]>([])
 
-  // Functional tools (10 key features)
+  // Functional tools (10 key features) - Updated to include Question Bank
   const functionalTools = [
     { icon: "📚", label: "Lesson Plan", type: "lesson-plan", color: "bg-green-100", functional: true },
     { icon: "📊", label: "Slide Presentation", type: "slide-presentation", color: "bg-blue-100", functional: true },
     { icon: "❓", label: "Quiz", type: "quiz", color: "bg-purple-100", functional: true },
+    { icon: "🏦", label: "Question Bank", type: "question-bank", color: "bg-orange-100", functional: true },
     {
       icon: "📋",
       label: "Instructional Sequence",
@@ -532,6 +534,7 @@ export default function DashboardPage() {
       <LessonPlanModal isOpen={openToolModal === "lesson-plan"} onClose={handleCloseToolModal} />
       <QuizModal isOpen={openToolModal === "quiz"} onClose={handleCloseToolModal} />
       <InstructionalSequenceModal isOpen={openToolModal === "instructional-sequence"} onClose={handleCloseToolModal} />
+      <QuestionBankModal isOpen={openToolModal === "question-bank"} onClose={handleCloseToolModal} />
 
       <Chatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
     </div>

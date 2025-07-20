@@ -15,7 +15,6 @@ import { Badge } from "@/components/ui/badge"
 import {
   Phone,
   Mail,
-  MapPin,
   Clock,
   Calendar,
   Users,
@@ -26,6 +25,8 @@ import {
   MessageSquare,
   Video,
   BookOpen,
+  Headphones,
+  Globe,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -62,20 +63,20 @@ export default function ContactPage() {
 
   const contactMethods = [
     {
+      icon: Mail,
+      title: "Email Support",
+      description: "Get detailed responses within 24 hours",
+      contact: "hello@qubilearn.in",
+      availability: "24/7 Response",
+      color: "bg-blue-100 text-blue-600",
+    },
+    {
       icon: Phone,
-      title: "Phone Support",
+      title: "Customer Care",
       description: "Speak with our education specialists",
       contact: "+91 98765 43210",
       availability: "Mon-Fri, 9 AM - 6 PM IST",
       color: "bg-green-100 text-green-600",
-    },
-    {
-      icon: Mail,
-      title: "Email Support",
-      description: "Get detailed responses within 24 hours",
-      contact: "support@mentora.ai",
-      availability: "24/7 Response",
-      color: "bg-blue-100 text-blue-600",
     },
     {
       icon: Video,
@@ -84,6 +85,14 @@ export default function ContactPage() {
       contact: "Book a 30-minute session",
       availability: "Available daily",
       color: "bg-purple-100 text-purple-600",
+    },
+    {
+      icon: Headphones,
+      title: "Online Support",
+      description: "Chat with our support team",
+      contact: "Live chat available",
+      availability: "Mon-Fri, 10 AM - 8 PM IST",
+      color: "bg-orange-100 text-orange-600",
     },
   ]
 
@@ -161,7 +170,7 @@ export default function ContactPage() {
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
               Whether you're a school administrator, teacher, or student, we're here to help you harness the power of AI
-              in education.
+              in education. Connect with us online for instant support.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 text-lg transition-all hover:scale-105">
@@ -183,10 +192,12 @@ export default function ContactPage() {
         <section className="py-20 px-6 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Multiple Ways to Connect</h2>
-              <p className="text-xl text-gray-600">Choose the method that works best for you</p>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Multiple Ways to Connect Online</h2>
+              <p className="text-xl text-gray-600">
+                Choose the method that works best for you - all available digitally
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {contactMethods.map((method, index) => (
                 <Card
                   key={index}
@@ -455,69 +466,49 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* Office Information */}
+        {/* Online Support Section */}
         <section className="py-20 px-6 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Visit Our Offices</h2>
-              <p className="text-xl text-gray-600">We have presence across major Indian cities</p>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">24/7 Online Support</h2>
+              <p className="text-xl text-gray-600">We're always here to help, wherever you are</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Card className="p-8 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-blue-600" />
+                    <Mail className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Mumbai (Headquarters)</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Email Support</h3>
                     <p className="text-gray-600 text-sm mb-3">
-                      Bandra Kurla Complex
+                      hello@qubilearn.in
                       <br />
-                      Mumbai, Maharashtra 400051
+                      Detailed responses within 24 hours
                     </p>
                     <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <Clock className="w-4 h-4" />
-                      Mon-Fri: 9 AM - 6 PM
+                      <Globe className="w-4 h-4" />
+                      Available worldwide
                     </div>
                   </div>
                 </div>
               </Card>
 
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <Card className="p-8 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-green-600" />
+                    <Phone className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Bangalore</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Customer Care</h3>
                     <p className="text-gray-600 text-sm mb-3">
-                      Koramangala
+                      +91 98765 43210
                       <br />
-                      Bangalore, Karnataka 560034
+                      Speak with education specialists
                     </p>
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <Clock className="w-4 h-4" />
-                      Mon-Fri: 9 AM - 6 PM
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Delhi NCR</h3>
-                    <p className="text-gray-600 text-sm mb-3">
-                      Cyber City, Gurgaon
-                      <br />
-                      Haryana 122002
-                    </p>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <Clock className="w-4 h-4" />
-                      Mon-Fri: 9 AM - 6 PM
+                      Mon-Fri: 9 AM - 6 PM IST
                     </div>
                   </div>
                 </div>
