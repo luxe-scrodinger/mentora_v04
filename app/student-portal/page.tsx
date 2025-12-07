@@ -190,8 +190,8 @@ export default function StudentPortalDemo() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
-  const [questionsAnswered, setQuestionsAnswered] = useState(0)
-  const [correctAnswersCount, setCorrectAnswersCount] = useState(0)
+  const [questionsAnswered, setQuestionsAnswered] = useState<number>(0)
+  const [correctAnswersCount, setCorrectAnswersCount] = useState<number>(0)
 
   const [progress, setProgress] = useState<StudentProgress>({
     grade: 5,
@@ -263,7 +263,8 @@ export default function StudentPortalDemo() {
     setShowFeedback(false)
   }
 
-  const accuracyPercentage = questionsAnswered > 0 ? Math.round((correctAnswersCount / questionsAnswered) * 100) : 0
+  const accuracyPercentage =
+    questionsAnswered > 0 ? Math.min(100, Math.max(0, Math.round((correctAnswersCount / questionsAnswered) * 100))) : 0
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
@@ -411,12 +412,12 @@ export default function StudentPortalDemo() {
                 <div>
                   <div className="flex justify-between mb-2">
                     <span className="text-sm font-semibold text-gray-700">Accuracy</span>
-                    <span className="text-sm font-bold text-blue-600">{accuracyPercentage}%</span>
+                    <span className="text-sm font-bold text-blue-600">{String(accuracyPercentage)}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-blue-600 h-2 rounded-full transition-all"
-                      style={{ width: `${accuracyPercentage}%` }}
+                      style={{ width: `${String(accuracyPercentage)}%` }}
                     />
                   </div>
                 </div>
@@ -424,11 +425,11 @@ export default function StudentPortalDemo() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="bg-blue-50 rounded p-3">
                     <div className="text-gray-600 text-xs font-medium">Questions</div>
-                    <div className="text-2xl font-bold text-blue-600">{questionsAnswered}</div>
+                    <div className="text-2xl font-bold text-blue-600">{String(questionsAnswered)}</div>
                   </div>
                   <div className="bg-green-50 rounded p-3">
                     <div className="text-gray-600 text-xs font-medium">Correct</div>
-                    <div className="text-2xl font-bold text-green-600">{correctAnswersCount}</div>
+                    <div className="text-2xl font-bold text-green-600">{String(correctAnswersCount)}</div>
                   </div>
                 </div>
 
