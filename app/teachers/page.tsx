@@ -1,345 +1,688 @@
-import { Label } from "@/components/ui/label"
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
-import { Users, TrendingUp, AlertTriangle, BookOpen, Award } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  TrendingUp,
+  Brain,
+  Target,
+  Zap,
+  CheckCircle,
+  Star,
+  PlayCircle,
+  BarChart3,
+  Users,
+  BookOpen,
+  Award,
+  Lightbulb,
+  Shield,
+  Smartphone,
+  Globe,
+  ArrowRight,
+} from "lucide-react"
+import Link from "next/link"
+import { useState, useEffect } from "react"
 
 export default function TeachersPage() {
+  const [activeDemo, setActiveDemo] = useState("lesson-plan")
+  const [animatedStats, setAnimatedStats] = useState({
+    teachers: 0,
+    schools: 0,
+    improvement: 0,
+    timeSaved: 0,
+  })
+
+  useEffect(() => {
+    const animateStats = () => {
+      const duration = 2000
+      const steps = 60
+      const increment = duration / steps
+
+      const targets = {
+        teachers: 50000,
+        schools: 5000,
+        improvement: 40,
+        timeSaved: 90,
+      }
+
+      let currentStep = 0
+      const interval = setInterval(() => {
+        currentStep++
+        const progress = currentStep / steps
+
+        setAnimatedStats({
+          teachers: Math.floor(targets.teachers * progress),
+          schools: Math.floor(targets.schools * progress),
+          improvement: Math.floor(targets.improvement * progress),
+          timeSaved: Math.floor(targets.timeSaved * progress),
+        })
+
+        if (currentStep >= steps) {
+          clearInterval(interval)
+        }
+      }, increment)
+    }
+
+    animateStats()
+  }, [])
+
+  const keyFeatures = [
+    {
+      icon: Brain,
+      title: "AI-Powered Lesson Planning",
+      description: "Generate comprehensive lesson plans in minutes with ChatGPT and XAI integration",
+      benefit: "Save 5+ hours per week on planning",
+      color: "bg-blue-100 text-blue-600",
+      hoverColor: "hover:bg-blue-200",
+    },
+    {
+      icon: Target,
+      title: "Personalized Adaptive Learning",
+      description: "AI adjusts difficulty based on each student's performance and learning pace",
+      benefit: "Improve student outcomes by 40%",
+      color: "bg-green-100 text-green-600",
+      hoverColor: "hover:bg-green-200",
+    },
+    {
+      icon: BarChart3,
+      title: "Real-time Analytics",
+      description: "Track student progress with detailed performance dashboards",
+      benefit: "Identify learning gaps instantly",
+      color: "bg-purple-100 text-purple-600",
+      hoverColor: "hover:bg-purple-200",
+    },
+    {
+      icon: Zap,
+      title: "Instant Question Generation",
+      description: "Create unlimited questions with answer keys for any topic or grade",
+      benefit: "Never run out of practice material",
+      color: "bg-orange-100 text-orange-600",
+      hoverColor: "hover:bg-orange-200",
+    },
+    {
+      icon: Globe,
+      title: "Multi-Curriculum Support",
+      description: "Seamlessly works with CBSE, ICSE, IB, and State Board curricula",
+      benefit: "Perfect for any Indian classroom",
+      color: "bg-pink-100 text-pink-600",
+      hoverColor: "hover:bg-pink-200",
+    },
+    {
+      icon: Smartphone,
+      title: "Mobile-First Design",
+      description: "Access all features on any device, anywhere, anytime",
+      benefit: "Teach from anywhere",
+      color: "bg-indigo-100 text-indigo-600",
+      hoverColor: "hover:bg-indigo-200",
+    },
+  ]
+
   const testimonials = [
     {
       name: "Dr. Anjali Gupta",
-      role: "Mathematics Teacher",
+      role: "Mathematics Teacher, Delhi Public School",
       quote:
-        "I have a wonderful experience with Mentora AI: it makes my work much easier, speeds things up, and is very user-friendly. My students' performance improved by 40%.",
-      image: "/placeholder.svg?height=40&width=40&text=AG",
+        "Mentora AI transformed my teaching. I save 6 hours weekly on lesson planning and my students' test scores improved by 45%. The PAL system adapts perfectly to each child's learning pace.",
+      rating: 5,
+      image: "AG",
+      school: "Delhi Public School",
+      subject: "Mathematics",
+      experience: "12 years",
+      improvement: "45%",
     },
     {
       name: "Ravi Sharma",
-      role: "Science Teacher",
+      role: "Science Teacher, Ryan International",
       quote:
-        "I loved Mentora AI platform, the technology is amazing and everything is in one place! Perfect for Indian classrooms.",
-      image: "/placeholder.svg?height=40&width=40&text=RS",
+        "The AI-generated questions are incredible! I can create personalized assessments for different learning levels in my class. My students are more engaged than ever.",
+      rating: 5,
+      image: "RS",
+      school: "Ryan International",
+      subject: "Science",
+      experience: "8 years",
+      improvement: "38%",
     },
     {
       name: "Priya Patel",
-      role: "English Teacher",
+      role: "English Teacher, Kendriya Vidyalaya",
       quote:
-        "I used the AI tools to create new activities, and there was an improvement in learning and my teaching practice. With Mentora AI, I create high-quality, diverse, and engaging materials for all students.",
-      image: "/placeholder.svg?height=40&width=40&text=PP",
+        "The multilingual support and CBSE alignment make this perfect for Indian classrooms. The analytics help me understand exactly where each student needs support.",
+      rating: 5,
+      image: "PP",
+      school: "Kendriya Vidyalaya",
+      subject: "English",
+      experience: "15 years",
+      improvement: "52%",
+    },
+  ]
+
+  const useCases = [
+    {
+      icon: BookOpen,
+      title: "Lesson Planning",
+      description: "Create detailed lesson plans with learning objectives, activities, and assessments",
+      time: "5 min",
+      traditional: "2 hours",
     },
     {
-      name: "Suresh Kumar",
-      role: "Principal",
-      quote:
-        "Mentora AI helped me prepare various materials for different subjects with activity suggestions and to complement teachers' work across our school!",
-      image: "/placeholder.svg?height=40&width=40&text=SK",
+      icon: Users,
+      title: "Student Assessment",
+      description: "Generate customized tests and quizzes with instant grading",
+      time: "2 min",
+      traditional: "1 hour",
+    },
+    {
+      icon: BarChart3,
+      title: "Progress Tracking",
+      description: "Monitor individual and class performance with detailed analytics",
+      time: "Instant",
+      traditional: "30 min",
+    },
+    {
+      icon: Lightbulb,
+      title: "Content Creation",
+      description: "Develop engaging activities, worksheets, and presentations",
+      time: "3 min",
+      traditional: "1.5 hours",
     },
   ]
 
-  const studentPerformanceData = [
-    { subject: "Hindi", performance: 95 },
-    { subject: "Mathematics", performance: 78 },
-    { subject: "Science", performance: 85 },
-    { subject: "Social Studies", performance: 82 },
-    { subject: "English", performance: 88 },
-    { subject: "Sanskrit", performance: 75 },
-    { subject: "Computer Science", performance: 92 },
-    { subject: "Art", performance: 89 },
-    { subject: "Physical Education", performance: 95 },
-    { subject: "Music", performance: 87 },
-    { subject: "Environmental Studies", performance: 83 },
-    { subject: "Moral Science", performance: 91 },
-    { subject: "General Knowledge", performance: 79 },
-    { subject: "Regional Language", performance: 86 },
-  ]
-
-  const curriculumBoards = [
-    { name: "CBSE", description: "Central Board of Secondary Education", color: "bg-blue-100 text-blue-800" },
-    { name: "ICSE", description: "Indian Certificate of Secondary Education", color: "bg-green-100 text-green-800" },
-    { name: "IB", description: "International Baccalaureate", color: "bg-purple-100 text-purple-800" },
-    { name: "State Boards", description: "Regional Education Boards", color: "bg-orange-100 text-orange-800" },
-    { name: "Custom", description: "Tailored Curriculum Solutions", color: "bg-pink-100 text-pink-800" },
-  ]
+  const demoContent = {
+    "lesson-plan": {
+      title: "AI Lesson Plan Generator",
+      content: (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl border-l-4 border-blue-500">
+            <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+              <BookOpen className="w-5 h-5" />
+              Grade 8 Mathematics - Quadratic Equations
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="space-y-2">
+                <div>
+                  <strong>Learning Objectives:</strong>
+                </div>
+                <ul className="list-disc list-inside ml-4 space-y-1 text-gray-700">
+                  <li>Understand quadratic equation structure</li>
+                  <li>Apply factoring methods effectively</li>
+                  <li>Solve real-world problems using quadratics</li>
+                </ul>
+              </div>
+              <div className="space-y-2">
+                <div>
+                  <strong>Assessment Methods:</strong>
+                </div>
+                <ul className="list-disc list-inside ml-4 space-y-1 text-gray-700">
+                  <li>Interactive problem-solving</li>
+                  <li>Peer collaboration exercises</li>
+                  <li>Quick formative assessments</li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-4 p-3 bg-yellow-100 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                <strong>AI Suggestion:</strong> Based on your class performance, focus extra time on factoring
+                techniques. 23% of students struggled with this concept last week.
+              </p>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    questions: {
+      title: "Smart Question Bank",
+      content: (
+        <div className="space-y-4">
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl">
+            <h4 className="font-semibold text-green-900 mb-4 flex items-center gap-2">
+              <Target className="w-5 h-5" />
+              Adaptive Questions - Grade 10 Physics
+            </h4>
+            <div className="space-y-4">
+              <div className="p-4 bg-white rounded-lg border-l-4 border-green-500 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge className="bg-green-100 text-green-800">Easy</Badge>
+                  <span className="text-sm text-gray-600">For struggling students</span>
+                </div>
+                <p className="font-medium mb-2">What is the SI unit of force?</p>
+                <p className="text-green-700 text-sm">✓ Answer: Newton (N)</p>
+                <p className="text-xs text-gray-500 mt-2">Success rate: 95% | Time: 30 seconds</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border-l-4 border-yellow-500 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge className="bg-yellow-100 text-yellow-800">Medium</Badge>
+                  <span className="text-sm text-gray-600">For average students</span>
+                </div>
+                <p className="font-medium mb-2">Calculate the force required to accelerate a 5kg object at 2m/s²</p>
+                <p className="text-yellow-700 text-sm">✓ Answer: F = ma = 5 × 2 = 10N</p>
+                <p className="text-xs text-gray-500 mt-2">Success rate: 78% | Time: 2 minutes</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border-l-4 border-red-500 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge className="bg-red-100 text-red-800">Hard</Badge>
+                  <span className="text-sm text-gray-600">For advanced students</span>
+                </div>
+                <p className="font-medium mb-2">
+                  A 1000kg car accelerates from rest to 20m/s in 10 seconds. Calculate the net force and power.
+                </p>
+                <p className="text-red-700 text-sm">✓ Answer: F = 2000N, P = 40,000W</p>
+                <p className="text-xs text-gray-500 mt-2">Success rate: 45% | Time: 8 minutes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    analytics: {
+      title: "Student Performance Analytics",
+      content: (
+        <div className="space-y-4">
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl">
+            <h4 className="font-semibold text-purple-900 mb-4 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              Class 9A - Real-time Performance Dashboard
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <h5 className="font-medium text-gray-800">Subject Performance</h5>
+                {[
+                  { subject: "Algebra", score: 85, trend: "up" },
+                  { subject: "Geometry", score: 72, trend: "down" },
+                  { subject: "Statistics", score: 91, trend: "up" },
+                  { subject: "Trigonometry", score: 68, trend: "down" },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="w-24 text-sm text-gray-600">{item.subject}</div>
+                    <div className="flex-1">
+                      <Progress value={item.score} className="h-2" />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-medium">{item.score}%</span>
+                      <TrendingUp
+                        className={`w-3 h-3 ${item.trend === "up" ? "text-green-500" : "text-red-500 rotate-180"}`}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-3">
+                <h5 className="font-medium text-gray-800">At-Risk Students</h5>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 p-2 bg-red-50 rounded-lg">
+                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-sm">
+                      AS
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Arjun Sharma</p>
+                      <p className="text-xs text-gray-600">Struggling with Trigonometry</p>
+                    </div>
+                    <Button size="sm" variant="outline" className="text-xs bg-transparent">
+                      Intervene
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 bg-yellow-50 rounded-lg">
+                    <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 font-bold text-sm">
+                      PG
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Priya Gupta</p>
+                      <p className="text-xs text-gray-600">Below average in Geometry</p>
+                    </div>
+                    <Button size="sm" variant="outline" className="text-xs bg-transparent">
+                      Support
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  }
 
   return (
     <div className="flex flex-col min-h-screen pt-16">
       <Header />
       <main className="flex-1">
-        {/* Hero Section with increased padding */}
-        <section className="py-32 px-6 bg-gradient-to-br from-blue-50 to-purple-50">
-          <div className="max-w-6xl mx-auto text-center mb-16">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Your happiest teachers.</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              With Mentora AI, Indian teachers save their time by 90% and gain access to higher-quality materials.
-            </p>
+        {/* Hero Section */}
+        <section className="py-20 px-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-20 left-20 w-32 h-32 bg-blue-300 rounded-full animate-pulse"></div>
+            <div className="absolute bottom-20 right-20 w-40 h-40 bg-purple-300 rounded-full animate-bounce"></div>
           </div>
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card
-                key={index}
-                className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 col-span-1 md:col-span-1 lg:col-span-2"
-              >
-                <p className="text-gray-700 mb-6 text-lg italic">"{testimonial.quote}"</p>
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12">
-                    <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
-                      {testimonial.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+
+          <div className="max-w-6xl mx-auto relative">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="animate-in slide-in-from-left duration-700">
+                <Badge className="mb-4 bg-blue-100 text-blue-800 px-4 py-2 animate-in fade-in duration-500 delay-200">
+                  Trusted by {animatedStats.teachers.toLocaleString()}+ Indian Teachers
+                </Badge>
+                <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight animate-in slide-in-from-left duration-700 delay-300">
+                  Transform Your Teaching with{" "}
+                  <span className="text-blue-600 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    AI-Powered
+                  </span>{" "}
+                  Education
+                </h1>
+                <p className="text-xl text-gray-600 mb-8 animate-in slide-in-from-left duration-700 delay-500">
+                  Save {animatedStats.timeSaved}% of your planning time while improving student outcomes by{" "}
+                  {animatedStats.improvement}%. Experience personalized adaptive learning that works for every Indian
+                  curriculum.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-in slide-in-from-left duration-700 delay-700">
+                  <Link href="/login">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 text-lg transform hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                      Start Free Trial
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg bg-transparent transform hover:scale-105 transition-all duration-300"
+                  >
+                    <PlayCircle className="w-5 h-5 mr-2" />
+                    Watch Demo
+                  </Button>
+                </div>
+                <div className="grid grid-cols-3 gap-6 animate-in slide-in-from-left duration-700 delay-900">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-600">{animatedStats.teachers.toLocaleString()}+</div>
+                    <div className="text-sm text-gray-600">Teachers</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-green-600">{animatedStats.schools.toLocaleString()}+</div>
+                    <div className="text-sm text-gray-600">Schools</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-purple-600">{animatedStats.improvement}%</div>
+                    <div className="text-sm text-gray-600">Improvement</div>
                   </div>
                 </div>
-              </Card>
-            ))}
-            <div className="col-span-1 md:col-span-3 lg:col-span-2 flex flex-col justify-center items-center gap-8">
-              <div className="text-center">
-                <div className="text-6xl font-bold text-blue-600">50K+</div>
-                <div className="text-xl font-semibold text-gray-900">Indian Teachers</div>
               </div>
-              <div className="text-center">
-                <div className="text-6xl font-bold text-blue-600">5K+</div>
-                <div className="text-xl font-semibold text-gray-900">Indian Schools</div>
+
+              <div className="relative animate-in slide-in-from-right duration-700 delay-300">
+                <div className="bg-white rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-all duration-500">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse delay-100"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse delay-200"></div>
+                    <span className="text-sm text-gray-500 ml-2">Mentora AI Dashboard</span>
+                  </div>
+                  <img
+                    src="/placeholder.svg?height=400&width=600&text=Teacher+Dashboard+Preview"
+                    alt="Teacher Dashboard"
+                    className="w-full rounded-lg"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Curriculum Support Section */}
-        <section className="py-24 px-6 bg-white">
-          <div className="max-w-6xl mx-auto text-center mb-16">
-            <Badge className="mb-4 bg-blue-100 text-blue-800 px-4 py-2 text-sm font-medium">CURRICULUM SUPPORT</Badge>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Aligned with Major Indian & International Curricula
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Supporting CBSE, ICSE, IB, State Boards, and Custom Curriculum Solutions
-            </p>
+        {/* Key Features Section */}
+        <section className="py-20 px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <Badge className="mb-4 bg-purple-100 text-purple-800 px-4 py-2 animate-in fade-in duration-500">
+                POWERFUL FEATURES
+              </Badge>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 animate-in slide-in-from-bottom duration-700">
+                Everything You Need to Excel in Teaching
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-in slide-in-from-bottom duration-700 delay-300">
+                Comprehensive AI tools designed specifically for Indian educators
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-              {curriculumBoards.map((board, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {keyFeatures.map((feature, index) => (
                 <Card
                   key={index}
-                  className="p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="p-8 hover:shadow-xl transition-all duration-500 border-l-4 border-blue-500 group transform hover:scale-105 animate-in slide-in-from-bottom duration-700"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BookOpen className="w-8 h-8 text-blue-600" />
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`p-3 ${feature.color} ${feature.hoverColor} rounded-lg transition-all duration-300 group-hover:scale-110`}
+                    >
+                      <feature.icon className="w-8 h-8" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-600 mb-3">{feature.description}</p>
+                      <div className="flex items-center gap-2 text-green-600 font-medium">
+                        <TrendingUp className="w-4 h-4" />
+                        {feature.benefit}
+                      </div>
+                    </div>
                   </div>
-                  <Badge className={`mb-3 ${board.color}`}>{board.name}</Badge>
-                  <p className="text-sm text-gray-600">{board.description}</p>
                 </Card>
               ))}
             </div>
-
-            <Card className="p-8 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <Award className="w-8 h-8 text-purple-600" />
-                <h3 className="text-2xl font-bold text-gray-900">Custom Curriculum Solutions</h3>
-              </div>
-              <p className="text-gray-600 mb-6 max-w-3xl mx-auto">
-                Need something unique for your institution? We create bespoke curriculum solutions tailored to your
-                specific requirements, learning objectives, and pedagogical approach. Perfect for specialized schools,
-                international institutions, and innovative educational programs.
-              </p>
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white">Discuss Custom Curriculum</Button>
-            </Card>
           </div>
         </section>
 
-        {/* Question Bank Section */}
-        <section className="py-24 px-6 bg-white">
-          <div className="max-w-6xl mx-auto text-center">
-            <Badge className="mb-4 bg-yellow-100 text-yellow-800 px-4 py-2 text-sm font-medium">QUESTION BANK</Badge>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              +200,000 questions with answer keys from various subjects and sources
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">Weekly updated assignments aligned with Indian curriculum</p>
-
-            <div className="bg-gray-50 p-8 rounded-lg shadow-inner max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="space-y-2 text-left">
-                  <Label htmlFor="grade-select" className="text-gray-700">
-                    Grade
-                  </Label>
-                  <Select>
-                    <SelectTrigger id="grade-select">
-                      <SelectValue placeholder="Select individual grade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="grade-1">Grade 1</SelectItem>
-                      <SelectItem value="grade-2">Grade 2</SelectItem>
-                      <SelectItem value="grade-3">Grade 3</SelectItem>
-                      <SelectItem value="grade-4">Grade 4</SelectItem>
-                      <SelectItem value="grade-5">Grade 5</SelectItem>
-                      <SelectItem value="grade-6">Grade 6</SelectItem>
-                      <SelectItem value="grade-7">Grade 7</SelectItem>
-                      <SelectItem value="grade-8">Grade 8</SelectItem>
-                      <SelectItem value="grade-9">Grade 9</SelectItem>
-                      <SelectItem value="grade-10">Grade 10</SelectItem>
-                      <SelectItem value="grade-11">Grade 11</SelectItem>
-                      <SelectItem value="grade-12">Grade 12</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2 text-left">
-                  <Label htmlFor="subject-select" className="text-gray-700">
-                    Subject
-                  </Label>
-                  <Select>
-                    <SelectTrigger id="subject-select">
-                      <SelectValue placeholder="Enter or select the subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="math">Mathematics</SelectItem>
-                      <SelectItem value="science">Science</SelectItem>
-                      <SelectItem value="social">Social Studies</SelectItem>
-                      <SelectItem value="english">English</SelectItem>
-                      <SelectItem value="hindi">Hindi</SelectItem>
-                      <SelectItem value="sanskrit">Sanskrit</SelectItem>
-                      <SelectItem value="physics">Physics</SelectItem>
-                      <SelectItem value="chemistry">Chemistry</SelectItem>
-                      <SelectItem value="biology">Biology</SelectItem>
-                      <SelectItem value="history">History</SelectItem>
-                      <SelectItem value="geography">Geography</SelectItem>
-                      <SelectItem value="economics">Economics</SelectItem>
-                      <SelectItem value="political-science">Political Science</SelectItem>
-                      <SelectItem value="computer-science">Computer Science</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-3 transition-colors">
-                Search questions
-              </Button>
+        {/* Time Saving Comparison */}
+        <section className="py-20 px-6 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">See How Much Time You'll Save</h2>
+              <p className="text-xl text-gray-600">Traditional methods vs. AI-powered efficiency</p>
             </div>
 
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="text-left">
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">
-                  Original questions reviewed by Indian educators
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Greater assurance in assessing learning and genuine student performance aligned with CBSE, ICSE, IB,
-                  and state board curricula.
-                </p>
-              </div>
-              <div className="relative flex justify-center">
-                <img
-                  src="/placeholder-9xg3j.png"
-                  alt="Question Preview"
-                  className="rounded-lg shadow-xl w-full max-w-md"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Data-Driven Learning Section */}
-        <section className="py-24 px-6 bg-gradient-to-br from-purple-50 to-blue-50">
-          <div className="max-w-6xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Data-Driven Learning for Indian Classrooms</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Performance, growth, and results in personalized dashboards tailored for Indian education.
-            </p>
-          </div>
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
-                Topics with highest error rate
-              </h3>
-              <ul className="space-y-3 text-left">
-                <li className="flex items-center gap-2 text-red-600 font-medium">
-                  <span className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center text-xs">1</span>
-                  Quadratic Equations
-                </li>
-                <li className="flex items-center gap-2 text-red-600 font-medium">
-                  <span className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center text-xs">2</span>
-                  Photosynthesis Process
-                </li>
-                <li className="flex items-center gap-2 text-red-600 font-medium">
-                  <span className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center text-xs">3</span>
-                  Indian History - Mughal Period
-                </li>
-                <li className="flex items-center gap-2 text-gray-700">
-                  <span className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center text-xs">4</span>
-                  English Grammar - Tenses
-                </li>
-                <li className="flex items-center gap-2 text-gray-700">
-                  <span className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center text-xs">5</span>
-                  Chemical Bonding
-                </li>
-              </ul>
-              <Button variant="outline" className="mt-6 w-full bg-transparent hover:bg-red-50">
-                Generate exercise list
-              </Button>
-            </Card>
-
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
-                Student performance by subject
-              </h3>
-              <div className="space-y-3">
-                {studentPerformanceData.map((data, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <span className="text-sm text-gray-700 w-24 text-right">{data.subject}</span>
-                    <Progress value={data.performance} className="flex-1" />
-                    <span className="text-sm font-medium text-gray-900">{data.performance}%</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {useCases.map((useCase, index) => (
+                <Card key={index} className="p-6 text-center group hover:shadow-lg transition-all duration-300">
+                  <div
+                    className={`p-4 ${keyFeatures[index]?.color} rounded-lg w-fit mx-auto mb-4 group-hover:scale-110 transition-transform`}
+                  >
+                    <useCase.icon className="w-8 h-8" />
                   </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{useCase.title}</h3>
+                  <p className="text-gray-600 mb-4 text-sm">{useCase.description}</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Traditional:</span>
+                      <span className="text-red-600 font-medium">{useCase.traditional}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">With AI:</span>
+                      <span className="text-green-600 font-bold">{useCase.time}</span>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section className="py-20 px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Experience Our Tools in Action</h2>
+              <p className="text-xl text-gray-600">See how our AI-powered features work with real examples</p>
+            </div>
+
+            <Tabs value={activeDemo} onValueChange={setActiveDemo} className="w-full">
+              <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto mb-8">
+                <TabsTrigger value="lesson-plan" className="text-sm">
+                  Lesson Plans
+                </TabsTrigger>
+                <TabsTrigger value="questions" className="text-sm">
+                  Question Bank
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="text-sm">
+                  Analytics
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="lesson-plan" className="mt-8">
+                <Card className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">AI Lesson Plan Generator</h3>
+                  {demoContent["lesson-plan"].content}
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="questions" className="mt-8">
+                <Card className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">Smart Question Bank</h3>
+                  {demoContent["questions"].content}
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="analytics" className="mt-8">
+                <Card className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">Student Performance Analytics</h3>
+                  {demoContent["analytics"].content}
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="py-20 px-6 bg-gradient-to-br from-blue-50 to-purple-50">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Loved by Teachers Across India</h2>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
                 ))}
+                <span className="text-lg font-semibold text-gray-700 ml-2">4.9/5 from 10,000+ reviews</span>
               </div>
-            </Card>
+            </div>
 
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-                Overall performance
-              </h3>
-              <div className="flex flex-col items-center justify-center h-48">
-                <div className="relative w-32 h-32">
-                  <svg className="w-full h-full" viewBox="0 0 100 100">
-                    <circle
-                      className="text-gray-200"
-                      strokeWidth="10"
-                      stroke="currentColor"
-                      fill="transparent"
-                      r="40"
-                      cx="50"
-                      cy="50"
-                    />
-                    <circle
-                      className="text-green-500"
-                      strokeWidth="10"
-                      strokeDasharray="276.46 251.32"
-                      strokeDashoffset="0"
-                      strokeLinecap="round"
-                      stroke="currentColor"
-                      fill="transparent"
-                      r="40"
-                      cx="50"
-                      cy="50"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-3xl font-bold text-gray-900">92%</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <Card key={index} className="p-8 hover:shadow-xl transition-all duration-300 group">
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
                   </div>
-                </div>
-                <div className="flex items-center gap-1 text-green-600 font-medium mt-2">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>+12%</span>
-                </div>
+                  <p className="text-gray-700 mb-6 italic leading-relaxed">"{testimonial.quote}"</p>
+                  <div className="flex items-center gap-4 mb-4">
+                    <Avatar className="w-14 h-14 group-hover:scale-110 transition-transform">
+                      <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold text-lg">
+                        {testimonial.image}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-600">{testimonial.role}</p>
+                      <p className="text-sm font-medium text-blue-600">{testimonial.school}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{testimonial.improvement}</div>
+                      <div className="text-xs text-gray-500">Improvement</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">{testimonial.experience}</div>
+                      <div className="text-xs text-gray-500">Experience</div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Security & Trust Section */}
+        <section className="py-20 px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <Badge className="mb-4 bg-green-100 text-green-800 px-4 py-2">SECURE & TRUSTED</Badge>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Your Data is Safe with Us</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Enterprise-grade security and privacy protection for all your educational data
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                {
+                  icon: Shield,
+                  title: "COPPA Compliant",
+                  description: "Full compliance with children's privacy regulations",
+                },
+                {
+                  icon: Award,
+                  title: "ISO 27001",
+                  description: "International security management standards",
+                },
+                {
+                  icon: Globe,
+                  title: "GDPR Ready",
+                  description: "European data protection compliance",
+                },
+                {
+                  icon: CheckCircle,
+                  title: "99.9% Uptime",
+                  description: "Reliable service you can count on",
+                },
+              ].map((item, index) => (
+                <Card key={index} className="p-6 text-center hover:shadow-lg transition-all duration-300 group">
+                  <div className="p-4 bg-green-100 rounded-lg w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <item.icon className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                  <p className="text-gray-600 text-sm">{item.description}</p>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 px-6 bg-gradient-to-r from-blue-600 to-purple-600">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl font-bold text-white mb-4">Ready to Transform Your Teaching?</h2>
+            <p className="text-xl text-blue-100 mb-8">
+              Join 50,000+ teachers who are already saving time and improving student outcomes
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Link href="/login">
+                <Button className="bg-white text-blue-600 hover:bg-gray-100 font-semibold px-8 py-4 text-lg transform hover:scale-105 transition-all duration-300">
+                  Start Your Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+              <Link href="mailto:hello@qubilearn.in">
+                <Button
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg bg-transparent transform hover:scale-105 transition-all duration-300"
+                >
+                  Contact Sales Team
+                </Button>
+              </Link>
+            </div>
+            <div className="flex items-center justify-center gap-8 text-blue-100 text-sm">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                14-day free trial
               </div>
-            </Card>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                No credit card required
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                Cancel anytime
+              </div>
+            </div>
           </div>
         </section>
       </main>

@@ -1,121 +1,245 @@
+"use client"
+
+import type React from "react"
+
 import Link from "next/link"
-import { Linkedin, Instagram, GraduationCap } from "lucide-react"
+import { useState } from "react"
+import { Sparkles, Mail, Phone, MapPin, ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export function Footer() {
+  const [email, setEmail] = useState("")
+  const [isSubscribed, setIsSubscribed] = useState(false)
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubscribed(true)
+    setEmail("")
+    setTimeout(() => setIsSubscribed(false), 3000)
+  }
+
   return (
-    <footer className="bg-gray-50 py-12 px-6 border-t border-gray-200">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-              <span className="text-gray-900">Mentora</span>
-              <span className="text-blue-600 text-sm font-medium">AI</span>
+    <footer className="bg-slate-900 text-white">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+          {/* Company Info */}
+          <div className="lg:col-span-2">
+            <Link href="/" className="flex items-center gap-2 font-bold text-2xl mb-4">
+              <Sparkles className="w-8 h-8 text-blue-400" />
+              <span>Spark School</span>
+              <span className="text-blue-400 text-lg">AI</span>
             </Link>
-            <p className="text-gray-600 text-sm">We reinvent teachers' lives with artificial intelligence</p>
-            <div className="flex items-center gap-4">
-              <Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
-                <Instagram className="w-5 h-5" />
-              </Link>
+            <p className="text-slate-300 mb-6 leading-relaxed">
+              India's revolutionary AI-powered education platform featuring personalized adaptive learning (PAL)
+              technology. Transforming education for millions of students across 500+ schools.
+            </p>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-slate-300">
+                <Mail className="w-4 h-4 text-blue-400" />
+                <a href="mailto:hello@sparkschool.ai" className="hover:text-white transition-colors">
+                  hello@sparkschool.ai
+                </a>
+              </div>
+              <div className="flex items-center gap-3 text-slate-300">
+                <Phone className="w-4 h-4 text-blue-400" />
+                <a href="tel:+919876543210" className="hover:text-white transition-colors">
+                  +91 98765 43210
+                </a>
+              </div>
+              <div className="flex items-center gap-3 text-slate-300">
+                <MapPin className="w-4 h-4 text-blue-400" />
+                <span>New Delhi, India</span>
+              </div>
             </div>
           </div>
-          <div className="space-y-2">
-            <h4 className="font-semibold text-gray-900">Audiences</h4>
-            <nav className="space-y-1 text-sm">
-              <Link href="/teachers" className="block text-gray-600 hover:text-gray-900 transition-colors">
-                Teachers
-              </Link>
-              <Link href="/students" className="block text-gray-600 hover:text-gray-900 transition-colors">
-                Students
-              </Link>
-              <Link href="/schools" className="block text-gray-600 hover:text-gray-900 transition-colors">
-                Schools
-              </Link>
-            </nav>
+
+          {/* Products */}
+          <div>
+            <h3 className="font-semibold text-lg mb-4 text-white">Products</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/teaching-materials" className="text-slate-300 hover:text-white transition-colors">
+                  Spark School AI
+                </Link>
+              </li>
+              <li>
+                <Link href="/student-portal" className="text-slate-300 hover:text-white transition-colors">
+                  Student Portal
+                </Link>
+              </li>
+              <li>
+                <Link href="/pal" className="text-slate-300 hover:text-white transition-colors">
+                  PAL Technology
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/teaching-materials#question-bank"
+                  className="text-slate-300 hover:text-white transition-colors"
+                >
+                  Question Bank
+                </Link>
+              </li>
+              <li>
+                <Link href="/analytics" className="text-slate-300 hover:text-white transition-colors">
+                  Analytics Dashboard
+                </Link>
+              </li>
+            </ul>
           </div>
-          <div className="space-y-2">
-            <h4 className="font-semibold text-gray-900">Materials</h4>
-            <nav className="space-y-1 text-sm">
-              <Link
-                href="/teaching-materials#ai-tools"
-                className="block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                AI Tools
-              </Link>
-              <Link
-                href="/teaching-materials#question-bank"
-                className="block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Question Bank
-              </Link>
-              <Link
-                href="/teaching-materials#lesson-plans"
-                className="block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Lesson Plans
-              </Link>
-              <Link
-                href="/teaching-materials#lessons"
-                className="block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Lessons
-              </Link>
-              <Link
-                href="/teaching-materials#activities"
-                className="block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Activities
-              </Link>
-              <Link
-                href="/teaching-materials#summaries"
-                className="block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Summaries
-              </Link>
-              <Link
-                href="/teaching-materials#chapters"
-                className="block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                Chapters
-              </Link>
-            </nav>
+
+          {/* Solutions */}
+          <div>
+            <h3 className="font-semibold text-lg mb-4 text-white">Solutions</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/schools" className="text-slate-300 hover:text-white transition-colors">
+                  For Schools
+                </Link>
+              </li>
+              <li>
+                <Link href="/students" className="text-slate-300 hover:text-white transition-colors">
+                  For Students
+                </Link>
+              </li>
+              <li>
+                <Link href="/teachers" className="text-slate-300 hover:text-white transition-colors">
+                  For Educators
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-slate-300 hover:text-white transition-colors">
+                  Enterprise
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-slate-300 hover:text-white transition-colors">
+                  API Integration
+                </Link>
+              </li>
+            </ul>
           </div>
-          <div className="space-y-2">
-            <h4 className="font-semibold text-gray-900">Resources</h4>
-            <nav className="space-y-1 text-sm">
-              <Link href="/faq" className="block text-gray-600 hover:text-gray-900 transition-colors">
-                FAQ
-              </Link>
-              <Link href="/contact" className="block text-gray-600 hover:text-gray-900 transition-colors">
-                Contact Us
-              </Link>
-              <Link href="/competitors" className="block text-gray-600 hover:text-gray-900 transition-colors">
-                Competitors
-              </Link>
-            </nav>
+
+          {/* Company */}
+          <div>
+            <h3 className="font-semibold text-lg mb-4 text-white">Company</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/about" className="text-slate-300 hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/careers" className="text-slate-300 hover:text-white transition-colors">
+                  Careers
+                </Link>
+              </li>
+              <li>
+                <Link href="/news" className="text-slate-300 hover:text-white transition-colors">
+                  News & Press
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-slate-300 hover:text-white transition-colors">
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/partners" className="text-slate-300 hover:text-white transition-colors">
+                  Partners
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h3 className="font-semibold text-lg mb-4 text-white">Resources</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/blog" className="text-slate-300 hover:text-white transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="text-slate-300 hover:text-white transition-colors">
+                  Help Center
+                </Link>
+              </li>
+              <li>
+                <Link href="/support" className="text-slate-300 hover:text-white transition-colors">
+                  Support
+                </Link>
+              </li>
+              <li>
+                <Link href="/case-studies" className="text-slate-300 hover:text-white transition-colors">
+                  Case Studies
+                </Link>
+              </li>
+              <li>
+                <Link href="/research" className="text-slate-300 hover:text-white transition-colors">
+                  Research
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-200 text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center gap-2">
-          <p>© 2025 Mentora AI - All rights reserved</p>
-          <div className="flex gap-4">
-            <Link href="/terms" className="hover:underline transition-colors">
-              Terms of Use
-            </Link>
-            <Link href="/privacy" className="hover:underline transition-colors">
-              Privacy Notice
-            </Link>
-            <Link href="/cookies" className="hover:underline transition-colors">
-              Cookies Notice
-            </Link>
-            <Link href="/preferences" className="hover:underline transition-colors">
-              Change Cookie Preferences
-            </Link>
+
+        {/* Newsletter Section */}
+        <div className="mt-12 pt-8 border-t border-slate-700">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center">
+            <h3 className="text-2xl font-bold text-white mb-2">Stay Updated with AI Education</h3>
+            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+              Get the latest insights on AI-powered learning, product updates, and educational innovations delivered to
+              your inbox.
+            </p>
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <Input
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-blue-100"
+                required
+              />
+              <Button
+                type="submit"
+                className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-6"
+                disabled={isSubscribed}
+              >
+                {isSubscribed ? "Subscribed!" : "Subscribe"}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </form>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="mt-12 pt-8 border-t border-slate-700">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-slate-400 text-sm">
+              © 2025 Spark School AI. All rights reserved. Empowering education with AI.
+            </div>
+            <div className="flex items-center gap-6">
+              <Link href="/privacy" className="text-slate-400 hover:text-white text-sm transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-slate-400 hover:text-white text-sm transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/cookies" className="text-slate-400 hover:text-white text-sm transition-colors">
+                Cookie Policy
+              </Link>
+              <Link href="/accessibility" className="text-slate-400 hover:text-white text-sm transition-colors">
+                Accessibility
+              </Link>
+            </div>
           </div>
         </div>
       </div>
     </footer>
   )
 }
+
+export default Footer

@@ -1,22 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import {
-  Trophy,
-  Target,
-  CheckCircle,
-  XCircle,
-  ArrowRight,
-  BookOpen,
-  Award,
-  TrendingUp,
-  GraduationCap,
-} from "lucide-react"
 import Link from "next/link"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { CheckCircle2, XCircle, TrendingUp, ArrowRight } from "lucide-react"
 
 interface Question {
   id: string
@@ -25,53 +14,210 @@ interface Question {
   correctAnswer: number
   concept: string
   difficulty: "easy" | "medium" | "hard"
+  commonMisconceptions?: string[]
 }
 
 interface StudentProgress {
+  grade: number
   currentTopic: string
   completedConcepts: string[]
   currentConcept: string
   points: number
   level: number
   streak: number
+  totalQuestionsAnswered: number
+  correctAnswers: number
 }
 
-export default function StudentPortal() {
+const questionBankByGrade: { [key: number]: Question[] } = {
+  4: [
+    {
+      id: "g4_1",
+      question: "What is 15 + 23?",
+      options: ["38", "37", "39", "36"],
+      correctAnswer: 0,
+      concept: "Addition",
+      difficulty: "easy",
+      commonMisconceptions: ["Carried over incorrectly"],
+    },
+    {
+      id: "g4_2",
+      question: "What is 50 - 17?",
+      options: ["33", "32", "34", "35"],
+      correctAnswer: 0,
+      concept: "Subtraction",
+      difficulty: "easy",
+      commonMisconceptions: ["Borrowed incorrectly from tens place"],
+    },
+    {
+      id: "g4_3",
+      question: "What is 6 × 7?",
+      options: ["42", "41", "43", "48"],
+      correctAnswer: 0,
+      concept: "Multiplication",
+      difficulty: "medium",
+      commonMisconceptions: ["Confused with addition"],
+    },
+    {
+      id: "g4_4",
+      question: "If a box has 24 apples and you divide them equally among 4 friends, how many does each get?",
+      options: ["6 apples", "5 apples", "7 apples", "8 apples"],
+      correctAnswer: 0,
+      concept: "Division",
+      difficulty: "medium",
+      commonMisconceptions: ["Multiplied instead of divided"],
+    },
+  ],
+  5: [
+    {
+      id: "g5_1",
+      question: "What is 234 + 567?",
+      options: ["801", "800", "802", "799"],
+      correctAnswer: 0,
+      concept: "Multi-digit Addition",
+      difficulty: "medium",
+      commonMisconceptions: ["Error in carrying over"],
+    },
+    {
+      id: "g5_2",
+      question: "What is 3/4 of 20?",
+      options: ["15", "14", "16", "13"],
+      correctAnswer: 0,
+      concept: "Fractions",
+      difficulty: "medium",
+      commonMisconceptions: ["Ignored denominator, just calculated 1/4"],
+    },
+    {
+      id: "g5_3",
+      question: "Convert 0.5 to a fraction in lowest terms.",
+      options: ["1/2", "2/4", "5/10", "50/100"],
+      correctAnswer: 0,
+      concept: "Decimals and Fractions",
+      difficulty: "medium",
+      commonMisconceptions: ["Did not reduce to lowest terms"],
+    },
+    {
+      id: "g5_4",
+      question: "What is the area of a rectangle with length 8 cm and width 5 cm?",
+      options: ["40 cm²", "26 cm", "13 cm²", "40 cm"],
+      correctAnswer: 0,
+      concept: "Area Calculation",
+      difficulty: "hard",
+      commonMisconceptions: ["Calculated perimeter instead of area"],
+    },
+  ],
+  6: [
+    {
+      id: "g6_1",
+      question: "Solve: 2x + 5 = 13. What is x?",
+      options: ["4", "5", "6", "9"],
+      correctAnswer: 0,
+      concept: "Linear Equations",
+      difficulty: "medium",
+      commonMisconceptions: ["Forgot to isolate variable, just subtracted 5"],
+    },
+    {
+      id: "g6_2",
+      question: "What is 30% of 80?",
+      options: ["24", "25", "23", "26"],
+      correctAnswer: 0,
+      concept: "Percentages",
+      difficulty: "medium",
+      commonMisconceptions: ["Confused 30% with 0.30 directly"],
+    },
+    {
+      id: "g6_3",
+      question: "If a shirt costs Rs. 500 and has a 20% discount, what is the new price?",
+      options: ["Rs. 400", "Rs. 420", "Rs. 380", "Rs. 450"],
+      correctAnswer: 0,
+      concept: "Percentage Discount",
+      difficulty: "hard",
+      commonMisconceptions: ["Added discount instead of subtracting"],
+    },
+    {
+      id: "g6_4",
+      question: "What is the ratio of 6 to 9 in simplest form?",
+      options: ["2:3", "3:2", "6:9", "1:1.5"],
+      correctAnswer: 0,
+      concept: "Ratios",
+      difficulty: "medium",
+      commonMisconceptions: ["Did not simplify the ratio"],
+    },
+  ],
+  7: [
+    {
+      id: "g7_1",
+      question: "Solve: 3x - 7 = 14. What is x?",
+      options: ["7", "6", "8", "5"],
+      correctAnswer: 0,
+      concept: "Linear Equations",
+      difficulty: "hard",
+      commonMisconceptions: ["Incorrect order of operations when solving"],
+    },
+    {
+      id: "g7_2",
+      question: "What is (-5) × (-3)?",
+      options: ["15", "-15", "-8", "8"],
+      correctAnswer: 0,
+      concept: "Integer Multiplication",
+      difficulty: "medium",
+      commonMisconceptions: ["Negative times negative is negative"],
+    },
+    {
+      id: "g7_3",
+      question: "If the ratio of boys to girls in a class is 3:2 and there are 15 boys, how many girls are there?",
+      options: ["10", "12", "8", "9"],
+      correctAnswer: 0,
+      concept: "Ratio and Proportion",
+      difficulty: "hard",
+      commonMisconceptions: ["Set up proportion incorrectly"],
+    },
+    {
+      id: "g7_4",
+      question: "What is the value of 2³ + 3²?",
+      options: ["17", "18", "25", "13"],
+      correctAnswer: 0,
+      concept: "Exponents",
+      difficulty: "hard",
+      commonMisconceptions: ["Multiplied instead of using exponent"],
+    },
+  ],
+}
+
+export default function StudentPortalDemo() {
+  const [selectedGrade, setSelectedGrade] = useState("5")
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
+  const [questionsAnswered, setQuestionsAnswered] = useState(0)
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0)
+
   const [progress, setProgress] = useState<StudentProgress>({
-    currentTopic: "Algebra Fundamentals",
-    completedConcepts: ["Basic Operations", "Variables"],
-    currentConcept: "Linear Equations",
+    grade: 5,
+    currentTopic: "Fractions & Decimals",
+    completedConcepts: ["Multi-digit Addition", "Multiplication"],
+    currentConcept: "Fractions",
     points: 1250,
     level: 5,
     streak: 7,
+    totalQuestionsAnswered: 47,
+    correctAnswers: 38,
   })
 
-  const sampleQuestions: Question[] = [
-    {
-      id: "1",
-      question: "What is the value of x in the equation 2x + 5 = 13?",
-      options: ["x = 4", "x = 6", "x = 8", "x = 9"],
-      correctAnswer: 0,
-      concept: "Linear Equations",
-      difficulty: "medium",
-    },
-    {
-      id: "2",
-      question: "If 3x - 7 = 14, what is x?",
-      options: ["x = 5", "x = 7", "x = 9", "x = 11"],
-      correctAnswer: 1,
-      concept: "Linear Equations",
-      difficulty: "medium",
-    },
-  ]
-
   useEffect(() => {
-    setCurrentQuestion(sampleQuestions[0])
-  }, [])
+    const gradeNum = Number.parseInt(selectedGrade)
+    const questions = questionBankByGrade[gradeNum as 4 | 5 | 6 | 7]
+    if (questions && questions.length > 0) {
+      setCurrentQuestion(questions[0])
+      setProgress((prev) => ({
+        ...prev,
+        grade: gradeNum,
+      }))
+    }
+    setSelectedAnswer(null)
+    setShowFeedback(false)
+  }, [selectedGrade])
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex)
@@ -83,9 +229,14 @@ export default function StudentPortal() {
     const correct = selectedAnswer === currentQuestion.correctAnswer
     setIsCorrect(correct)
     setShowFeedback(true)
+    setQuestionsAnswered((prev) => prev + 1)
+
+    if (correct) {
+      setCorrectAnswersCount((prev) => prev + 1)
+    }
 
     try {
-      const response = await fetch("/api/pal/submit-answer", {
+      await fetch("/api/pal/submit-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -93,228 +244,241 @@ export default function StudentPortal() {
           selectedAnswer,
           isCorrect: correct,
           concept: currentQuestion.concept,
+          grade: Number.parseInt(selectedGrade),
         }),
       })
-
-      if (correct) {
-        setProgress((prev) => ({
-          ...prev,
-          points: prev.points + 50,
-          streak: prev.streak + 1,
-        }))
-      } else {
-        setProgress((prev) => ({
-          ...prev,
-          streak: 0,
-        }))
-      }
     } catch (error) {
-      console.error("Error submitting answer:", error)
+      console.log("[v0] Answer submission error:", error)
     }
   }
 
-  const handleNextQuestion = async () => {
-    setShowFeedback(false)
+  const handleNextQuestion = () => {
+    const gradeNum = Number.parseInt(selectedGrade) as 4 | 5 | 6 | 7
+    const questions = questionBankByGrade[gradeNum]
+    const currentIndex = questions.findIndex((q) => q.id === currentQuestion?.id)
+    const nextIndex = (currentIndex + 1) % questions.length
+
+    setCurrentQuestion(questions[nextIndex])
     setSelectedAnswer(null)
-
-    try {
-      const response = await fetch("/api/pal/next-question", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          wasCorrect: isCorrect,
-          currentConcept: progress.currentConcept,
-          studentLevel: progress.level,
-        }),
-      })
-
-      const data = await response.json()
-      setCurrentQuestion(data.question || sampleQuestions[1])
-    } catch (error) {
-      console.error("Error getting next question:", error)
-      setCurrentQuestion(sampleQuestions[1])
-    }
+    setShowFeedback(false)
   }
+
+  const accuracyPercentage = questionsAnswered > 0 ? Math.round((correctAnswersCount / questionsAnswered) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center gap-2 font-bold text-xl group transition-transform hover:scale-105"
-            >
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-              <span className="text-gray-900">Mentora</span>
-              <span className="text-blue-600 text-sm font-medium">AI</span>
-            </Link>
-
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-yellow-500" />
-                <span className="font-semibold">{progress.points} pts</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-green-500" />
-                <span className="font-semibold">Level {progress.level}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-purple-500" />
-                <span className="font-semibold">{progress.streak} streak</span>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <Link href="/" className="text-blue-600 hover:text-blue-700 mb-4 inline-block">
+            ← Back to Home
+          </Link>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">PAL Demo</h1>
+          <p className="text-gray-600">Experience adaptive learning in action</p>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Learning Progress Sidebar */}
-          <div className="space-y-6">
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  Current Topic
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <h3 className="font-semibold text-lg mb-2">{progress.currentTopic}</h3>
-                <Progress value={65} className="mb-4" />
-                <p className="text-sm text-gray-600">65% Complete</p>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  Learning Path
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {progress.completedConcepts.map((concept, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span className="text-sm text-gray-600">{concept}</span>
-                    </div>
-                  ))}
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-blue-500 animate-pulse" />
-                    <span className="text-sm font-medium">{progress.currentConcept}</span>
-                    <Badge variant="secondary">Current</Badge>
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Content - Questions */}
+          <div className="lg:col-span-2">
+            <Card className="shadow-lg">
+              <CardHeader className="pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-xl mb-2">{currentQuestion?.concept}</CardTitle>
+                    <CardDescription className="flex items-center gap-2">
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-medium ${
+                          currentQuestion?.difficulty === "easy"
+                            ? "bg-green-100 text-green-800"
+                            : currentQuestion?.difficulty === "medium"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {currentQuestion?.difficulty?.charAt(0).toUpperCase() + currentQuestion?.difficulty?.slice(1)}
+                      </span>
+                    </CardDescription>
                   </div>
+                  <Select value={selectedGrade} onValueChange={setSelectedGrade}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[4, 5, 6, 7].map((grade) => (
+                        <SelectItem key={grade} value={grade.toString()}>
+                          Grade {grade}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Question */}
+                <div>
+                  <p className="text-lg font-semibold text-gray-900 mb-4">{currentQuestion?.question}</p>
+
+                  {/* Options */}
+                  <div className="space-y-3">
+                    {currentQuestion?.options.map((option, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleAnswerSelect(index)}
+                        disabled={showFeedback}
+                        className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                          selectedAnswer === index
+                            ? isCorrect && showFeedback
+                              ? "border-green-500 bg-green-50"
+                              : !isCorrect && showFeedback
+                                ? "border-red-500 bg-red-50"
+                                : "border-blue-500 bg-blue-50"
+                            : index === currentQuestion?.correctAnswer && showFeedback && !isCorrect
+                              ? "border-green-500 bg-green-50"
+                              : "border-gray-200 bg-white hover:border-blue-300"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-gray-900">{option}</span>
+                          {showFeedback && (
+                            <>
+                              {selectedAnswer === index && isCorrect && (
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                              )}
+                              {selectedAnswer === index && !isCorrect && <XCircle className="w-5 h-5 text-red-500" />}
+                              {index === currentQuestion?.correctAnswer && !isCorrect && (
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Feedback */}
+                {showFeedback && (
+                  <div
+                    className={`p-4 rounded-lg ${isCorrect ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}
+                  >
+                    <div className="flex items-start gap-2">
+                      {isCorrect ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                      )}
+                      <div>
+                        <p className={`font-semibold ${isCorrect ? "text-green-900" : "text-red-900"}`}>
+                          {isCorrect ? "Correct!" : "Not quite right"}
+                        </p>
+                        <p className={`text-sm mt-1 ${isCorrect ? "text-green-800" : "text-red-800"}`}>
+                          {isCorrect
+                            ? `Great job! You correctly answered this ${currentQuestion?.concept} question.`
+                            : `The correct answer is: ${currentQuestion?.options[currentQuestion?.correctAnswer]}`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleSubmitAnswer}
+                    disabled={selectedAnswer === null || showFeedback}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    Submit Answer
+                  </Button>
+                  {showFeedback && (
+                    <Button onClick={handleNextQuestion} variant="outline" className="flex-1 bg-transparent">
+                      Next Question <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Main Learning Area */}
-          <div className="lg:col-span-2">
-            <Card className="h-fit shadow-lg">
-              <CardHeader>
-                <CardTitle>Personalized Adaptive Learning (PAL)</CardTitle>
-                <p className="text-gray-600">Answer questions to progress through {progress.currentConcept}</p>
+          {/* Sidebar - Progress and Content */}
+          <div className="space-y-6">
+            {/* Progress Card */}
+            <Card className="shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Your Progress</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {currentQuestion && (
-                  <>
-                    <div className="p-6 bg-gray-50 rounded-lg">
-                      <h3 className="text-lg font-semibold mb-4">{currentQuestion.question}</h3>
-                      <div className="space-y-3">
-                        {currentQuestion.options.map((option, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleAnswerSelect(index)}
-                            disabled={showFeedback}
-                            className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
-                              selectedAnswer === index
-                                ? showFeedback
-                                  ? index === currentQuestion.correctAnswer
-                                    ? "border-green-500 bg-green-50"
-                                    : "border-red-500 bg-red-50"
-                                  : "border-blue-500 bg-blue-50"
-                                : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                  selectedAnswer === index
-                                    ? showFeedback
-                                      ? index === currentQuestion.correctAnswer
-                                        ? "border-green-500 bg-green-500"
-                                        : "border-red-500 bg-red-500"
-                                      : "border-blue-500 bg-blue-500"
-                                    : "border-gray-300"
-                                }`}
-                              >
-                                {selectedAnswer === index &&
-                                  showFeedback &&
-                                  (index === currentQuestion.correctAnswer ? (
-                                    <CheckCircle className="w-4 h-4 text-white" />
-                                  ) : (
-                                    <XCircle className="w-4 h-4 text-white" />
-                                  ))}
-                              </div>
-                              <span>{option}</span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+              <CardContent className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-semibold text-gray-700">Accuracy</span>
+                    <span className="text-sm font-bold text-blue-600">{accuracyPercentage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all"
+                      style={{ width: `${accuracyPercentage}%` }}
+                    />
+                  </div>
+                </div>
 
-                    {showFeedback && (
-                      <div
-                        className={`p-4 rounded-lg transition-all duration-300 ${
-                          isCorrect ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          {isCorrect ? (
-                            <CheckCircle className="w-5 h-5 text-green-600" />
-                          ) : (
-                            <XCircle className="w-5 h-5 text-red-600" />
-                          )}
-                          <span className={`font-semibold ${isCorrect ? "text-green-800" : "text-red-800"}`}>
-                            {isCorrect ? "Excellent!" : "Not quite right"}
-                          </span>
-                        </div>
-                        <p className={`text-sm ${isCorrect ? "text-green-700" : "text-red-700"}`}>
-                          {isCorrect
-                            ? "Great job! You're mastering linear equations. Keep it up!"
-                            : "Let's review the concept of isolating variables. Remember to perform the same operation on both sides of the equation."}
-                        </p>
-                        {isCorrect && <div className="mt-2 text-sm text-green-700">+50 points earned! 🎉</div>}
-                      </div>
-                    )}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-blue-50 rounded p-3">
+                    <div className="text-gray-600 text-xs font-medium">Questions</div>
+                    <div className="text-2xl font-bold text-blue-600">{questionsAnswered}</div>
+                  </div>
+                  <div className="bg-green-50 rounded p-3">
+                    <div className="text-gray-600 text-xs font-medium">Correct</div>
+                    <div className="text-2xl font-bold text-green-600">{correctAnswersCount}</div>
+                  </div>
+                </div>
 
-                    <div className="flex justify-end">
-                      {!showFeedback ? (
-                        <Button
-                          onClick={handleSubmitAnswer}
-                          disabled={selectedAnswer === null}
-                          className="bg-blue-600 hover:bg-blue-700 transition-all hover:scale-105"
-                        >
-                          Submit Answer
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={handleNextQuestion}
-                          className="bg-blue-600 hover:bg-blue-700 transition-all hover:scale-105"
-                        >
-                          Next Question
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      )}
-                    </div>
-                  </>
-                )}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Level</span>
+                    <span className="font-bold text-gray-900">{progress.level}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Points</span>
+                    <span className="font-bold text-gray-900">{progress.points}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Streak</span>
+                    <span className="font-bold text-gray-900">{progress.streak} days</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
+
+            {/* Learning Content Card */}
+            <Card className="shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Learning Content</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                  <p className="text-sm font-semibold text-gray-900 mb-2">Key Concept</p>
+                  <p className="text-sm text-gray-700">{currentQuestion?.concept}</p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <p className="font-semibold text-gray-900">Available Resources:</p>
+                  <ul className="space-y-1 text-gray-700">
+                    <li>• Video explanation (5-8 min)</li>
+                    <li>• Interactive examples</li>
+                    <li>• Practice problems</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Progress Button */}
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2 bg-transparent"
+              onClick={() => (window.location.href = "/student-learning")}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Check Your Progress
+            </Button>
           </div>
         </div>
       </div>

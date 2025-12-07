@@ -119,7 +119,7 @@ export default function HomePage() {
       role: "Mathematics Teacher",
       school: "Delhi Public School, Mumbai",
       quote:
-        "Mentora AI has revolutionized my classroom. The PAL system identifies exactly where each student struggles and provides targeted support instantly. My students' performance has improved by 35%.",
+        "Spark School AI has revolutionized my classroom. The PAL system identifies exactly where each student struggles and provides targeted support instantly. My students' performance has improved by 35%.",
       image: "/placeholder.svg?height=40&width=40&text=PS",
       rating: 5,
     },
@@ -146,7 +146,7 @@ export default function HomePage() {
       role: "Principal",
       school: "St. Xavier's School, Chennai",
       quote:
-        "Our school-wide test scores improved 28% after implementing Mentora AI. The automatic intervention feature is game-changing for Indian education.",
+        "Our school-wide test scores improved 28% after implementing Spark School AI. The automatic intervention feature is game-changing for Indian education.",
       image: "/placeholder.svg?height=40&width=40&text=AS",
       rating: 5,
     },
@@ -176,13 +176,13 @@ export default function HomePage() {
         <section className="py-32 px-6 text-center bg-gradient-to-br from-blue-50 to-purple-50">
           <div className="max-w-4xl mx-auto">
             <Badge className="mb-6 bg-blue-100 text-blue-800 px-4 py-2 text-sm font-medium animate-pulse">
-              Mentora AI - Transforming Indian Education
+              Spark School AI - Transforming Indian Education
             </Badge>
             <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Reinventing Teachers' Lives with <span className="text-blue-600">Artificial Intelligence</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Mentora AI is a revolutionary platform designed to empower Indian educators, automate processes, and
+              Spark School AI is a revolutionary platform designed to empower Indian educators, automate processes, and
               personalize learning for every student.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -216,7 +216,7 @@ export default function HomePage() {
                 </div>
               </div>
               <p className="text-gray-700 font-medium">
-                See how Mentora AI can transform your school's teaching and learning experience
+                See how Spark School AI can transform your school's teaching and learning experience
               </p>
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function HomePage() {
         {/* Audience CTA Section with increased padding */}
         <section className="py-24 px-6 bg-white">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-gray-900 mb-12">Who is Mentora AI for?</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-12">Who is Spark School AI for?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Link href="/teachers" className="group block">
                 <div className="p-8 border rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col items-center justify-center group-hover:scale-105">
@@ -279,8 +279,8 @@ export default function HomePage() {
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Five Revolutionary AI Features</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Mentora AI combines cutting-edge technology with educational expertise to transform how students learn
-                and teachers teach.
+                Spark School AI combines cutting-edge technology with educational expertise to transform how students
+                learn and teachers teach.
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -471,7 +471,7 @@ export default function HomePage() {
                 Transforming Education <span className="text-blue-600">Worldwide</span>
               </h2>
               <p className="text-xl text-gray-600">
-                Join educators from around the globe who are revolutionizing learning with Mentora AI.
+                Join educators from around the globe who are revolutionizing learning with Spark School AI.
               </p>
             </div>
 
@@ -498,7 +498,7 @@ export default function HomePage() {
                 Trusted by Indian Educators <span className="text-blue-600">Nationwide</span>
               </h2>
               <p className="text-xl text-gray-600">
-                See how Mentora AI is transforming Indian classrooms and improving student outcomes.
+                See how Spark School AI is transforming Indian classrooms and improving student outcomes.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -535,7 +535,7 @@ export default function HomePage() {
         <section className="py-24 px-6 bg-gradient-to-br from-gray-50 to-blue-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose Mentora AI?</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose Spark School AI?</h2>
               <p className="text-xl text-gray-600">
                 Built by educators, for educators, with cutting-edge AI technology.
               </p>
@@ -570,7 +570,8 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Classroom?</h2>
             <p className="text-xl mb-8 opacity-90">
-              Join thousands of Indian educators using Mentora AI to personalize learning and improve student outcomes.
+              Join thousands of Indian educators using Spark School AI to personalize learning and improve student
+              outcomes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Link href="/login">

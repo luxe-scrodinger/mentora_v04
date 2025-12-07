@@ -6,9 +6,10 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Mentora - AI for Education",
-  description: "Mentora: Reinventing teachers' lives with artificial intelligence.",
-    generator: 'v0.dev'
+  title: "Spark School AI - Personalized Adaptive Learning",
+  description:
+    "Spark School AI: Empowering teachers with AI to create personalized learning experiences for every student. Revolutionary PAL technology for Indian education.",
+  generator: "v0.dev",
 }
 
 export default function RootLayout({

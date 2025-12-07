@@ -19,13 +19,13 @@ import {
   X,
   Zap,
   HelpCircle,
-  GraduationCap,
   BarChart3,
   Settings,
   Plus,
   Eye,
   Download,
   Share2,
+  Sparkles,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -36,6 +36,11 @@ import { LessonPlanModal } from "@/components/modals/lesson-plan-modal"
 import { QuizModal } from "@/components/modals/quiz-modal"
 import { InstructionalSequenceModal } from "@/components/modals/instructional-sequence-modal"
 import { QuestionBankModal } from "@/components/modals/question-bank-modal"
+import { MindMapModal } from "@/components/modals/mind-map-modal"
+import { ExamModal } from "@/components/modals/exam-modal"
+import { ActivityIdeasModal } from "@/components/modals/activity-ideas-modal"
+import { ReviewTutorModal } from "@/components/modals/review-tutor-modal"
+import { RecoveryPlanModal } from "@/components/modals/recovery-plan-modal"
 import { Chatbot } from "@/components/chatbot"
 
 export default function DashboardPage() {
@@ -146,11 +151,7 @@ export default function DashboardPage() {
   ]
 
   const handleOpenToolModal = (toolType: string) => {
-    const tool = allTools.find((t) => t.type === toolType)
-    if (tool?.functional) {
-      setOpenToolModal(toolType)
-      setIsCreateMoreAIModalOpen(false)
-    }
+    setOpenToolModal(toolType)
   }
 
   const handleCloseToolModal = () => {
@@ -167,8 +168,8 @@ export default function DashboardPage() {
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4">
           <Link href="/" className="flex items-center gap-2 mb-6 group transition-transform hover:scale-105">
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-gray-900 font-bold text-xl">Mentora</span>
+            <Sparkles className="w-8 h-8 text-blue-600" />
+            <span className="text-gray-900 font-bold text-xl">Spark School</span>
             <span className="text-blue-600 text-sm font-medium">AI</span>
           </Link>
 
@@ -280,7 +281,7 @@ export default function DashboardPage() {
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Mentora AI</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Spark School AI</h2>
                         <p className="text-gray-600 mb-4">Create personalized lessons and assessments in minutes</p>
                         <Button
                           className="bg-gray-800 hover:bg-gray-900 text-white transition-colors"
@@ -292,7 +293,7 @@ export default function DashboardPage() {
 
                       <div className="flex items-center gap-4">
                         <div className="w-32 h-20 bg-gradient-to-br from-blue-200 to-purple-200 rounded-lg flex items-center justify-center">
-                          <GraduationCap className="w-12 h-12 text-blue-600" />
+                          <Sparkles className="w-12 h-12 text-blue-600" />
                         </div>
                       </div>
                     </div>
@@ -535,6 +536,11 @@ export default function DashboardPage() {
       <QuizModal isOpen={openToolModal === "quiz"} onClose={handleCloseToolModal} />
       <InstructionalSequenceModal isOpen={openToolModal === "instructional-sequence"} onClose={handleCloseToolModal} />
       <QuestionBankModal isOpen={openToolModal === "question-bank"} onClose={handleCloseToolModal} />
+      <MindMapModal isOpen={openToolModal === "mind-map"} onClose={handleCloseToolModal} />
+      <ExamModal isOpen={openToolModal === "exam"} onClose={handleCloseToolModal} />
+      <ActivityIdeasModal isOpen={openToolModal === "activity-ideas"} onClose={handleCloseToolModal} />
+      <ReviewTutorModal isOpen={openToolModal === "review-tutor"} onClose={handleCloseToolModal} />
+      <RecoveryPlanModal isOpen={openToolModal === "recovery-plan"} onClose={handleCloseToolModal} />
 
       <Chatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
     </div>

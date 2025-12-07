@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { BarChart3, Users, TrendingUp, AlertTriangle, CheckCircle, GraduationCap, Brain, Target } from "lucide-react"
+import { BarChart3, Users, TrendingUp, AlertTriangle, CheckCircle, Sparkles, Brain, Target } from "lucide-react"
 import Link from "next/link"
 
 export default function AnalyticsPage() {
@@ -31,13 +31,12 @@ export default function AnalyticsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-              <span className="text-gray-900">Mentora</span>
+              <Sparkles className="w-8 h-8 text-blue-600" />
+              <span className="text-gray-900">Spark School</span>
               <span className="text-blue-600 text-sm font-medium">AI</span>
             </Link>
 

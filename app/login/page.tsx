@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { GraduationCap, Mail, Lock, User, School } from "lucide-react"
+import { GraduationCap, Mail, Lock, User, School, Sparkles } from "lucide-react"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -32,8 +32,8 @@ export default function LoginPage() {
             href="/"
             className="inline-flex items-center gap-2 font-bold text-2xl mb-4 group transition-transform hover:scale-105"
           >
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-gray-900">Mentora</span>
+            <Sparkles className="w-8 h-8 text-blue-600" />
+            <span className="text-gray-900">Spark School</span>
             <span className="text-blue-600 text-sm font-medium">AI</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>

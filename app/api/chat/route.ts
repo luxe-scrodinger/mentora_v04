@@ -1,16 +1,16 @@
 import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai"
+import { groq } from "@ai-sdk/groq"
+import { xai } from "@ai-sdk/xai"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json()
+    const { message, aiModel = "groq" } = await req.json()
 
-    // Define the chatbot's persona and capabilities
-    const systemPrompt = `You are Lara, Mentora AI's helpful and knowledgeable assistant. You are an expert in education technology and personalized learning.
+    const systemPrompt = `You are Lara, Spark School AI's helpful and knowledgeable assistant. You are an expert in education technology and personalized adaptive learning.
 
 Your capabilities include:
-- Explaining Mentora AI's features in detail (Contextual Lesson Generation, Smart Assessment Creator, PAL, Real-Time Analytics, Automatic Intervention)
+- Explaining Spark School AI's features in detail (Contextual Lesson Generation, Smart Assessment Creator, PAL, Real-Time Analytics, Automatic Intervention)
 - Providing step-by-step guidance on using specific tools (Lesson Plan, Slide Presentation, Quiz, Science Lab, etc.)
 - Offering troubleshooting assistance and best practices
 - Explaining how PAL (Personalized Adaptive Learning) works
@@ -22,7 +22,7 @@ Key features to highlight:
 - Real-time Analytics: Teachers see student misconceptions instantly
 - Google Classroom Integration: Push assignments directly to classrooms
 - Automatic Intervention: AI bridges learning gaps without teacher involvement
-- 50,000+ active teachers, 1M+ students learning globally
+- Misconception Detection: Automatically identifies and logs student misunderstandings
 
 Always be:
 - Friendly and encouraging
@@ -33,27 +33,47 @@ Always be:
 
 Keep responses conversational but informative, around 2-3 paragraphs maximum.`
 
-    const hasOpenAIKey = !!process.env.OPENAI_API_KEY
+    const hasGroqKey = !!process.env.GROQ_API_KEY
+    const hasXaiKey = !!process.env.XAI_API_KEY
 
     let botReply = ""
 
-    if (hasOpenAIKey) {
-      const { text } = await generateText({
-        model: openai("gpt-4o"),
-        prompt: message,
-        system: systemPrompt,
-        temperature: 0.7,
-        maxTokens: 500,
-      })
-      botReply = text
+    if (hasGroqKey && aiModel !== "xai") {
+      try {
+        const { text } = await generateText({
+          model: groq("mixtral-8x7b-32768"),
+          prompt: message,
+          system: systemPrompt,
+          temperature: 0.7,
+          maxTokens: 500,
+        })
+        botReply = text
+      } catch (groqError) {
+        console.error("Groq API error:", groqError)
+        botReply = generateDemoResponse(message.toLowerCase())
+      }
+    } else if (hasXaiKey && aiModel === "xai") {
+      try {
+        const { text } = await generateText({
+          model: xai("grok-4"),
+          prompt: message,
+          system: systemPrompt,
+          temperature: 0.7,
+          maxTokens: 500,
+        })
+        botReply = text
+      } catch (xaiError) {
+        console.error("Grok API error:", xaiError)
+        botReply = generateDemoResponse(message.toLowerCase())
+      }
     } else {
-      // Provide intelligent demo responses based on common questions
       botReply = generateDemoResponse(message.toLowerCase())
     }
 
     return NextResponse.json({
       success: true,
       aiResponse: botReply,
+      aiModel: hasGroqKey || hasXaiKey ? aiModel : "demo",
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
@@ -81,7 +101,7 @@ Would you like to know more about how teachers use the analytics dashboard, or a
   }
 
   if (message.includes("lesson plan") || message.includes("generate") || message.includes("create")) {
-    return `I'd be happy to help you with lesson planning! Mentora AI's Contextual Lesson Generation is one of our most popular features. Simply enter your topic, grade level, and any specific context about your class, and our AI creates comprehensive lesson plans tailored to your needs.
+    return `I'd be happy to help you with lesson planning! Spark School AI's Contextual Lesson Generation is one of our most popular features. Simply enter your topic, grade level, and any specific context about your class, and our AI creates comprehensive lesson plans tailored to your needs.
 
 The best part? You can push these lessons directly to Google Classroom with PAL enabled, so students get personalized question paths based on their understanding. Teachers report saving 10+ hours per week on lesson prep! The AI considers curriculum standards, learning objectives, and even suggests differentiation strategies for different learner needs.
 
@@ -89,7 +109,7 @@ Try clicking on the "Lesson Plan" tool in your dashboard - it's the one with the
   }
 
   if (message.includes("quiz") || message.includes("assessment") || message.includes("test")) {
-    return `Assessments are where Mentora AI really shines! Our Smart Assessment Creator doesn't just generate random questions - it creates contextual questions perfectly aligned to learning gaps and curriculum standards. You can specify the number of questions, difficulty level, and question types (multiple choice, open-ended, or both).
+    return `Assessments are where Spark School AI really shines! Our Smart Assessment Creator doesn't just generate random questions - it creates contextual questions perfectly aligned to learning gaps and curriculum standards. You can specify the number of questions, difficulty level, and question types (multiple choice, open-ended, or both).
 
 Once you create a quiz, you can push it to Google Classroom where PAL takes over. Students who answer correctly move forward, while those who struggle get immediate feedback and remedial questions on prerequisite concepts. Teachers get real-time analytics showing misconceptions as they happen - no more waiting for test results!
 
@@ -105,15 +125,15 @@ You can access the analytics dashboard anytime to see class-wide trends, individ
   }
 
   if (message.includes("google classroom") || message.includes("integration") || message.includes("push")) {
-    return `Yes! Mentora AI integrates seamlessly with Google Classroom. When you create lesson plans, quizzes, or any learning materials, you can push them directly to your classroom with just one click. The integration maintains all the PAL functionality, so students get the full personalized learning experience.
+    return `Yes! Spark School AI integrates seamlessly with Google Classroom. When you create lesson plans, quizzes, or any learning materials, you can push them directly to your classroom with just one click. The integration maintains all the PAL functionality, so students get the full personalized learning experience.
 
-Here's what happens: You create content in Mentora → Push to Google Classroom → Students access through their familiar Classroom interface → PAL provides personalized question paths → You get real-time analytics on student progress. It's that simple!
+Here's what happens: You create content in Spark School AI → Push to Google Classroom → Students access through their familiar Classroom interface → PAL provides personalized question paths → You get real-time analytics on student progress. It's that simple!
 
 The integration respects all Google Classroom permissions and workflows, so it feels natural for both teachers and students. No need to learn new platforms - just enhanced functionality in the tools you already use!`
   }
 
   if (message.includes("student") || message.includes("learn") || message.includes("portal")) {
-    return `Students love the Mentora AI experience! When they log into the Student Portal, they see their personalized learning path with progress tracking, points, and achievement levels. The PAL system makes learning feel like a game - they earn points for correct answers and get helpful guidance when they struggle.
+    return `Students love the Spark School AI experience! When they log into the Student Portal, they see their personalized learning path with progress tracking, points, and achievement levels. The PAL system makes learning feel like a game - they earn points for correct answers and get helpful guidance when they struggle.
 
 What makes it special is that wrong answers aren't failures - they're learning opportunities. The AI immediately provides feedback and easier questions to build understanding step by step. Students can see their progress visually and feel motivated to keep learning.
 
@@ -121,7 +141,7 @@ Parents and teachers can track progress in real-time, seeing exactly which conce
   }
 
   if (message.includes("help") || message.includes("how") || message.includes("start")) {
-    return `I'm here to help you get the most out of Mentora AI! Here are some great ways to get started:
+    return `I'm here to help you get the most out of Spark School AI! Here are some great ways to get started:
 
 🎯 **Try the Dashboard**: Click on any tool icon (Lesson Plan, Quiz, etc.) to create your first AI-generated content
 📊 **Explore Analytics**: Check out the real-time progress tracking for your students  
@@ -132,7 +152,7 @@ What specific feature would you like to explore first? I can provide step-by-ste
   }
 
   // Default response for unmatched queries
-  return `Hi there! I'm Lara, your Mentora AI assistant. I'm here to help you make the most of our personalized learning platform! 
+  return `Hi there! I'm Lara, your Spark School AI assistant. I'm here to help you make the most of our personalized learning platform! 
 
 I can help you with:
 • Understanding how PAL (Personalized Adaptive Learning) works
@@ -141,5 +161,5 @@ I can help you with:
 • Integrating with Google Classroom
 • Troubleshooting any issues you might have
 
-What would you like to know more about? Feel free to ask me anything about Mentora AI's features or how to use them effectively in your classroom!`
+What would you like to know more about? Feel free to ask me anything about Spark School AI's features or how to use them effectively in your classroom!`
 }

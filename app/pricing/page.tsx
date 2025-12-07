@@ -1,0 +1,423 @@
+"use client"
+
+import { useState } from "react"
+import { Check, X, Calendar, Zap, Users, Building2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+export default function PricingPage() {
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly")
+
+  const studentPlans = [
+    {
+      name: "Free Trial",
+      price: "Free",
+      description: "Get started with Spark School AI",
+      features: [
+        { text: "Access to PAL Demo", included: true },
+        { text: "5 practice questions per day", included: true },
+        { text: "Basic progress tracking", included: true },
+        { text: "Limited to Grade 4-5 content", included: true },
+        { text: "Full curriculum access", included: false },
+        { text: "Personalized learning paths", included: false },
+        { text: "Performance analytics", included: false },
+      ],
+      cta: "Start Free",
+      highlighted: false,
+    },
+    {
+      name: "One Subject",
+      price: "₹999",
+      period: "/month",
+      description: "Master one subject with adaptive learning",
+      features: [
+        { text: "PAL for 1 subject", included: true },
+        { text: "Unlimited practice questions", included: true },
+        { text: "All grades (1-12) content", included: true },
+        { text: "Personalized learning paths", included: true },
+        { text: "Real-time performance analytics", included: true },
+        { text: "Video explanations", included: true },
+        { text: "Multiple subjects access", included: false },
+      ],
+      cta: "Subscribe Now",
+      highlighted: false,
+    },
+    {
+      name: "All Subjects",
+      price: "₹1999",
+      period: "/month",
+      description: "Complete learning across all subjects",
+      features: [
+        { text: "PAL for all subjects", included: true },
+        { text: "Unlimited practice questions", included: true },
+        { text: "All grades (1-12) content", included: true },
+        { text: "Personalized learning paths", included: true },
+        { text: "Real-time performance analytics", included: true },
+        { text: "Video explanations & notes", included: true },
+        { text: "Misconception tracking", included: true },
+      ],
+      cta: "Subscribe Now",
+      highlighted: true,
+    },
+  ]
+
+  const teacherPlans = [
+    {
+      name: "Free Trial",
+      price: "Free",
+      description: "Explore teacher tools",
+      features: [
+        { text: "Access to all teacher tools", included: true },
+        { text: "Limited question generation", included: true },
+        { text: "Up to 2 classes", included: true },
+        { text: "Basic analytics", included: true },
+        { text: "Unlimited classes", included: false },
+        { text: "Advanced content generation", included: false },
+        { text: "Student performance insights", included: false },
+      ],
+      cta: "Start Free",
+      highlighted: false,
+    },
+    {
+      name: "Professional",
+      price: "₹699",
+      period: "/month",
+      description: "For teachers wanting advanced tools",
+      features: [
+        { text: "All teacher tools unlimited", included: true },
+        { text: "Unlimited question generation", included: true },
+        { text: "Unlimited classes", included: true },
+        { text: "Advanced content generation", included: true },
+        { text: "Real-time student analytics", included: true },
+        { text: "Google Classroom integration", included: true },
+        { text: "Priority support", included: true },
+      ],
+      cta: "Subscribe Now",
+      highlighted: true,
+    },
+  ]
+
+  const schoolPlans = [
+    {
+      name: "Starter",
+      teachers: "5 Teachers",
+      students: "100 Students",
+      price: "₹14,999",
+      period: "/month",
+      description: "Perfect for small schools",
+      features: [
+        { text: "Up to 5 teacher accounts", included: true },
+        { text: "Up to 100 student accounts", included: true },
+        { text: "All teacher features", included: true },
+        { text: "Student learning paths", included: true },
+        { text: "Basic school analytics", included: true },
+        { text: "Email support", included: true },
+        { text: "Custom onboarding", included: false },
+        { text: "Dedicated account manager", included: false },
+      ],
+      cta: "Schedule Demo",
+      highlighted: false,
+    },
+    {
+      name: "Standard",
+      teachers: "25 Teachers",
+      students: "250 Students",
+      price: "₹29,999",
+      period: "/month",
+      description: "Most popular for schools",
+      features: [
+        { text: "Up to 25 teacher accounts", included: true },
+        { text: "Up to 250 student accounts", included: true },
+        { text: "All teacher features", included: true },
+        { text: "Complete learning journeys", included: true },
+        { text: "Advanced school analytics", included: true },
+        { text: "Priority email & phone support", included: true },
+        { text: "Custom onboarding & training", included: true },
+        { text: "Monthly performance reports", included: true },
+      ],
+      cta: "Schedule Demo",
+      highlighted: true,
+    },
+    {
+      name: "Enterprise",
+      teachers: "10+ Teachers",
+      students: "500+ Students",
+      price: "₹49,999+",
+      period: "/month",
+      description: "For large schools & districts",
+      features: [
+        { text: "Up to 10 teachers (expandable)", included: true },
+        { text: "Up to 500 students (expandable)", included: true },
+        { text: "All Standard features", included: true },
+        { text: "API access for integrations", included: true },
+        { text: "Custom reporting & dashboards", included: true },
+        { text: "Dedicated support team", included: true },
+        { text: "Custom feature development", included: true },
+        { text: "SLA guarantees", included: true },
+      ],
+      cta: "Contact Sales",
+      highlighted: false,
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h1>
+          <p className="text-xl text-gray-600 mb-8">
+            Choose the perfect plan for your learning journey. All plans include free access to explore features.
+          </p>
+
+          {/* Billing Cycle Toggle */}
+          <div className="flex justify-center gap-4 mb-8">
+            <Button
+              variant={billingCycle === "monthly" ? "default" : "outline"}
+              onClick={() => setBillingCycle("monthly")}
+              className="px-6"
+            >
+              Monthly Billing
+            </Button>
+            <Button
+              variant={billingCycle === "annual" ? "default" : "outline"}
+              onClick={() => setBillingCycle("annual")}
+              className="px-6"
+            >
+              Annual Billing (Save 20%)
+            </Button>
+          </div>
+        </div>
+
+        {/* Pricing Tabs */}
+        <Tabs defaultValue="students" className="w-full">
+          <TabsList className="grid w-full max-w-md mx-auto mb-12 grid-cols-3">
+            <TabsTrigger value="students" className="flex items-center gap-2">
+              <Zap className="w-4 h-4" />
+              <span className="hidden sm:inline">Students</span>
+            </TabsTrigger>
+            <TabsTrigger value="teachers" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              <span className="hidden sm:inline">Teachers</span>
+            </TabsTrigger>
+            <TabsTrigger value="schools" className="flex items-center gap-2">
+              <Building2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Schools</span>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Students Pricing */}
+          <TabsContent value="students" className="space-y-8">
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {studentPlans.map((plan, idx) => (
+                <Card
+                  key={idx}
+                  className={`relative transition-all duration-300 hover:shadow-lg ${
+                    plan.highlighted ? "md:scale-105 border-blue-500 shadow-lg" : ""
+                  }`}
+                >
+                  {plan.highlighted && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      Most Popular
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    <CardDescription>{plan.description}</CardDescription>
+                    <div className="mt-4">
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                      {plan.period && <span className="text-gray-600 ml-2">{plan.period}</span>}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <Button
+                      className={`w-full ${
+                        plan.highlighted
+                          ? "bg-blue-600 hover:bg-blue-700 text-white"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-900"
+                      }`}
+                    >
+                      {plan.cta}
+                    </Button>
+                    <div className="space-y-3">
+                      {plan.features.map((feature, fIdx) => (
+                        <div key={fIdx} className="flex items-start gap-3">
+                          {feature.included ? (
+                            <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                          ) : (
+                            <X className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5" />
+                          )}
+                          <span
+                            className={
+                              feature.included ? "text-gray-900 text-sm" : "text-gray-400 text-sm line-through"
+                            }
+                          >
+                            {feature.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Teachers Pricing */}
+          <TabsContent value="teachers" className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {teacherPlans.map((plan, idx) => (
+                <Card
+                  key={idx}
+                  className={`relative transition-all duration-300 hover:shadow-lg ${
+                    plan.highlighted ? "md:col-span-2 md:w-1/2 mx-auto border-blue-500 shadow-lg" : ""
+                  }`}
+                >
+                  {plan.highlighted && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      Recommended
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    <CardDescription>{plan.description}</CardDescription>
+                    <div className="mt-4">
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                      {plan.period && <span className="text-gray-600 ml-2">{plan.period}</span>}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <Button
+                      className={`w-full ${
+                        plan.highlighted
+                          ? "bg-blue-600 hover:bg-blue-700 text-white"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-900"
+                      }`}
+                    >
+                      {plan.cta}
+                    </Button>
+                    <div className="space-y-3">
+                      {plan.features.map((feature, fIdx) => (
+                        <div key={fIdx} className="flex items-start gap-3">
+                          {feature.included ? (
+                            <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                          ) : (
+                            <X className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5" />
+                          )}
+                          <span
+                            className={
+                              feature.included ? "text-gray-900 text-sm" : "text-gray-400 text-sm line-through"
+                            }
+                          >
+                            {feature.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Schools Pricing */}
+          <TabsContent value="schools" className="space-y-8">
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {schoolPlans.map((plan, idx) => (
+                <Card
+                  key={idx}
+                  className={`relative transition-all duration-300 hover:shadow-lg ${
+                    plan.highlighted ? "border-blue-500 shadow-lg" : ""
+                  }`}
+                >
+                  {plan.highlighted && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      Most Popular
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    <CardDescription className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span>{plan.teachers}</span>
+                        <span>{plan.students}</span>
+                      </div>
+                      <div className="text-xs text-gray-500">{plan.description}</div>
+                    </CardDescription>
+                    <div className="mt-4">
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                      {plan.period && <span className="text-gray-600 ml-2">{plan.period}</span>}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      {plan.cta}
+                    </Button>
+                    <div className="space-y-3">
+                      {plan.features.map((feature, fIdx) => (
+                        <div key={fIdx} className="flex items-start gap-3">
+                          {feature.included ? (
+                            <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                          ) : (
+                            <X className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5" />
+                          )}
+                          <span
+                            className={
+                              feature.included ? "text-gray-900 text-sm" : "text-gray-400 text-sm line-through"
+                            }
+                          >
+                            {feature.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        {/* FAQ Section */}
+        <div className="max-w-3xl mx-auto mt-16 pt-12 border-t border-gray-200">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: "Can I try Spark School AI for free?",
+                a: "Yes! All users can register for free and access demo features. Students get 5 daily questions, teachers get limited question generation, and schools can explore the platform with a trial.",
+              },
+              {
+                q: "Do I need a credit card to start the free trial?",
+                a: "No credit card required for free accounts. Simply register and start exploring Spark School AI immediately.",
+              },
+              {
+                q: "Can I upgrade or downgrade my plan anytime?",
+                a: "Yes, you can change your plan at any time. Changes take effect immediately, and we'll prorate your billing accordingly.",
+              },
+              {
+                q: "What payment methods do you accept?",
+                a: "We accept credit cards, debit cards, UPI, and net banking. All transactions are secure and encrypted.",
+              },
+              {
+                q: "Is there a setup fee for schools?",
+                a: "No setup fees. We provide free onboarding and training for all school plans.",
+              },
+              {
+                q: "Do you offer discounts for annual billing?",
+                a: "Yes! Annual billing plans come with a 20% discount compared to monthly pricing.",
+              },
+            ].map((item, idx) => (
+              <div key={idx}>
+                <h3 className="font-semibold text-gray-900 mb-2">{item.q}</h3>
+                <p className="text-gray-600 text-sm">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

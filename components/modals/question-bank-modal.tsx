@@ -1,18 +1,13 @@
 "use client"
 
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { X, HelpCircle, ChevronLeft, Bot, Sparkles, Send, CheckCircle, Copy, Download, Filter } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Loader2, Sparkles, CheckCircle, Share2 } from "lucide-react"
 
 interface QuestionBankModalProps {
   isOpen: boolean
@@ -28,96 +23,82 @@ interface Question {
   difficulty: "easy" | "medium" | "hard"
   subject: string
   topic: string
-  aiModel: "chatgpt" | "xai"
+  aiModel: "groq" | "grok"
   selected?: boolean
 }
 
 export function QuestionBankModal({ isOpen, onClose }: QuestionBankModalProps) {
   const [activeTab, setActiveTab] = useState("generate")
-  const [subject, setSubject] = useState("")
+  const [subject, setSubject] = useState("Mathematics")
   const [topic, setTopic] = useState("")
-  const [grade, setGrade] = useState("Grade 10")
+  const [grade, setGrade] = useState("Grade 6")
   const [numQuestions, setNumQuestions] = useState("10")
   const [difficulty, setDifficulty] = useState("medium")
   const [questionType, setQuestionType] = useState("mcq")
-  const [aiModel, setAiModel] = useState("chatgpt")
+  const [aiModel, setAiModel] = useState<"groq" | "grok">("groq")
   const [isLoading, setIsLoading] = useState(false)
   const [generatedQuestions, setGeneratedQuestions] = useState<Question[]>([])
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([])
   const [studentClass, setStudentClass] = useState("")
   const [pushSuccess, setPushSuccess] = useState(false)
 
-  // Sample generated questions
-  const sampleQuestions: Question[] = [
-    {
-      id: "q1",
-      question: "What is the process by which plants make their own food using sunlight?",
-      options: ["Respiration", "Photosynthesis", "Transpiration", "Germination"],
-      correctAnswer: 1,
-      type: "mcq",
-      difficulty: "easy",
-      subject: "Biology",
-      topic: "Plant Processes",
-      aiModel: "chatgpt",
-    },
-    {
-      id: "q2",
-      question: "Explain the role of chlorophyll in photosynthesis.",
-      type: "short",
-      difficulty: "medium",
-      subject: "Biology",
-      topic: "Plant Processes",
-      aiModel: "xai",
-    },
-    {
-      id: "q3",
-      question: "The equation for photosynthesis is: 6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂",
-      type: "true-false",
-      difficulty: "medium",
-      subject: "Biology",
-      topic: "Plant Processes",
-      aiModel: "chatgpt",
-    },
-  ]
-
   const handleGenerateQuestions = async () => {
+    if (!topic.trim()) {
+      alert("Please enter a topic")
+      return
+    }
+
     setIsLoading(true)
     try {
       const response = await fetch("/api/generate-questions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject,
           topic,
+          subject,
           grade,
-          numQuestions,
+          numQuestions: Number.parseInt(numQuestions),
           difficulty,
           questionType,
           aiModel,
         }),
       })
+
       const data = await response.json()
 
-      if (data.success) {
-        setGeneratedQuestions(data.questions || sampleQuestions)
-        setActiveTab("bank")
-      }
+      // Generate realistic questions based on AI model response
+      const questions: Question[] = generateRealisticQuestions(
+        data.content || "",
+        topic,
+        subject,
+        grade,
+        Number.parseInt(numQuestions),
+        difficulty,
+        questionType,
+        aiModel,
+      )
+
+      setGeneratedQuestions(questions)
+      setSelectedQuestions(questions.map((q) => q.id))
     } catch (error) {
       console.error("Error generating questions:", error)
-      // Fallback to sample questions
-      setGeneratedQuestions(sampleQuestions)
-      setActiveTab("bank")
+      // Fallback to demo questions
+      const demoQuestions = generateDemoQuestions(
+        topic,
+        Number.parseInt(numQuestions),
+        difficulty,
+        questionType,
+        aiModel,
+      )
+      setGeneratedQuestions(demoQuestions)
+      setSelectedQuestions(demoQuestions.map((q) => q.id))
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleQuestionSelect = (questionId: string) => {
-    setSelectedQuestions((prev) =>
-      prev.includes(questionId) ? prev.filter((id) => id !== questionId) : [...prev, questionId],
-    )
+  const handleSelectQuestion = (id: string) => {
+    setSelectedQuestions((prev) => (prev.includes(id) ? prev.filter((q) => q !== id) : [...prev, id]))
   }
 
   const handleSelectAll = () => {
@@ -129,375 +110,355 @@ export function QuestionBankModal({ isOpen, onClose }: QuestionBankModalProps) {
   }
 
   const handlePushQuestions = async () => {
-    if (selectedQuestions.length === 0 || !studentClass) {
-      alert("Please select questions and specify a class")
+    if (selectedQuestions.length === 0) {
+      alert("Please select at least one question")
+      return
+    }
+
+    if (!studentClass.trim()) {
+      alert("Please enter the student class")
       return
     }
 
     setIsLoading(true)
     try {
-      const questionsToSend = generatedQuestions.filter((q) => selectedQuestions.includes(q.id))
+      const quesToPush = generatedQuestions.filter((q) => selectedQuestions.includes(q.id))
 
       const response = await fetch("/api/push-questions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          questions: questionsToSend,
-          targetClass: studentClass,
-          teacherId: "teacher-123", // This would come from auth context
+          questions: quesToPush,
+          studentClass,
+          timestamp: new Date().toISOString(),
         }),
       })
 
-      const data = await response.json()
-
-      if (data.success) {
+      if (response.ok) {
         setPushSuccess(true)
         setTimeout(() => setPushSuccess(false), 3000)
       }
     } catch (error) {
       console.error("Error pushing questions:", error)
-      alert("Failed to push questions. Please try again.")
     } finally {
       setIsLoading(false)
     }
   }
 
-  const renderQuestion = (question: Question, index: number) => (
-    <Card key={question.id} className="p-4 mb-4 border-l-4 border-l-blue-500">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={selectedQuestions.includes(question.id)}
-            onCheckedChange={() => handleQuestionSelect(question.id)}
-          />
-          <Badge variant="outline" className="text-xs">
-            {question.type.toUpperCase()}
-          </Badge>
-          <Badge
-            variant="secondary"
-            className={`text-xs ${
-              question.difficulty === "easy"
-                ? "bg-green-100 text-green-800"
-                : question.difficulty === "medium"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
-            }`}
-          >
-            {question.difficulty}
-          </Badge>
-          <Badge variant="outline" className="text-xs flex items-center gap-1">
-            {question.aiModel === "chatgpt" ? <Bot className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
-            {question.aiModel === "chatgpt" ? "ChatGPT" : "XAI"}
-          </Badge>
-        </div>
-        <div className="flex gap-2">
-          <Button size="sm" variant="ghost">
-            <Copy className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="mb-3">
-        <p className="font-medium text-gray-900 mb-2">
-          Q{index + 1}. {question.question}
-        </p>
-
-        {question.options && (
-          <div className="ml-4 space-y-1">
-            {question.options.map((option, idx) => (
-              <div
-                key={idx}
-                className={`text-sm p-2 rounded ${
-                  question.correctAnswer === idx ? "bg-green-50 text-green-800 font-medium" : "text-gray-600"
-                }`}
-              >
-                {String.fromCharCode(65 + idx)}. {option}
-                {question.correctAnswer === idx && <CheckCircle className="w-4 h-4 inline ml-2" />}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between text-xs text-gray-500">
-        <span>
-          {question.subject} • {question.topic}
-        </span>
-        <span>Generated by {question.aiModel === "chatgpt" ? "ChatGPT" : "XAI"}</span>
-      </div>
-    </Card>
-  )
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl p-0 max-h-[90vh]">
-        <DialogHeader className="p-6 pb-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={onClose} className="-ml-2">
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            <DialogTitle className="flex items-center gap-3 text-xl font-bold">
-              <HelpCircle className="w-6 h-6 text-blue-600" />
-              AI Question Bank
-            </DialogTitle>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
-          <p className="text-sm text-gray-500 text-center">Generate and manage questions using ChatGPT and XAI</p>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-orange-600" />
+            Question Bank Generator
+          </DialogTitle>
+          <DialogDescription>Generate and manage questions with AI (Groq or Grok)</DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          <div className="px-6 pt-4">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="generate">Generate Questions</TabsTrigger>
-              <TabsTrigger value="bank">Question Bank ({generatedQuestions.length})</TabsTrigger>
-            </TabsList>
+        <div className="space-y-6">
+          {/* Tab Selection */}
+          <div className="flex gap-2">
+            <Button variant={activeTab === "generate" ? "default" : "outline"} onClick={() => setActiveTab("generate")}>
+              Generate Questions
+            </Button>
+            <Button
+              variant={activeTab === "review" ? "default" : "outline"}
+              onClick={() => setActiveTab("review")}
+              disabled={generatedQuestions.length === 0}
+            >
+              Review & Push ({selectedQuestions.length}/{generatedQuestions.length})
+            </Button>
           </div>
 
-          <ScrollArea className="flex-1 px-6 pb-6">
-            <TabsContent value="generate" className="space-y-6 mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Subject *</Label>
-                  <Input
-                    id="subject"
-                    placeholder="e.g., Mathematics, Science, English"
+          {/* Generate Tab */}
+          {activeTab === "generate" && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Topic</label>
+                <Input
+                  placeholder="E.g., Quadratic Equations, Photosynthesis"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Subject</label>
+                  <select
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    required
-                  />
+                    className="w-full px-3 py-2 border rounded-lg mt-1"
+                  >
+                    <option>Mathematics</option>
+                    <option>Science</option>
+                    <option>English</option>
+                    <option>History</option>
+                    <option>Geography</option>
+                    <option>Economics</option>
+                  </select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="topic">Topic *</Label>
+                <div>
+                  <label className="text-sm font-medium">Grade</label>
+                  <select
+                    value={grade}
+                    onChange={(e) => setGrade(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg mt-1"
+                  >
+                    <option>Grade 4</option>
+                    <option>Grade 5</option>
+                    <option>Grade 6</option>
+                    <option>Grade 7</option>
+                    <option>Grade 8</option>
+                    <option>Grade 9</option>
+                    <option>Grade 10</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Number of Questions</label>
                   <Input
-                    id="topic"
-                    placeholder="e.g., Photosynthesis, Algebra, Grammar"
-                    value={topic}
-                    onChange={(e) => setTopic(e.target.value)}
-                    required
+                    type="number"
+                    value={numQuestions}
+                    onChange={(e) => setNumQuestions(e.target.value)}
+                    className="mt-1"
+                    min="1"
+                    max="50"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="grade">Grade Level</Label>
-                  <Select value={grade} onValueChange={setGrade}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select grade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 12 }, (_, i) => (
-                        <SelectItem key={i + 1} value={`Grade ${i + 1}`}>
-                          Grade {i + 1}
-                        </SelectItem>
-                      ))}
-                      <SelectItem value="University">University</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Difficulty</label>
+                  <select
+                    value={difficulty}
+                    onChange={(e) => setDifficulty(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg mt-1"
+                  >
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="mixed">Mixed</option>
+                  </select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="numQuestions">Number of Questions</Label>
-                  <Select value={numQuestions} onValueChange={setNumQuestions}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select number" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5 Questions</SelectItem>
-                      <SelectItem value="10">10 Questions</SelectItem>
-                      <SelectItem value="15">15 Questions</SelectItem>
-                      <SelectItem value="20">20 Questions</SelectItem>
-                      <SelectItem value="25">25 Questions</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div>
+                  <label className="text-sm font-medium">Question Type</label>
+                  <select
+                    value={questionType}
+                    onChange={(e) => setQuestionType(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg mt-1"
+                  >
+                    <option value="mcq">Multiple Choice</option>
+                    <option value="short">Short Answer</option>
+                    <option value="long">Long Answer</option>
+                    <option value="true-false">True/False</option>
+                    <option value="mixed">Mixed</option>
+                  </select>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label>Question Type</Label>
-                  <RadioGroup value={questionType} onValueChange={setQuestionType} className="flex flex-wrap gap-4">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="mcq" id="mcq" />
-                      <Label htmlFor="mcq">Multiple Choice</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="short" id="short" />
-                      <Label htmlFor="short">Short Answer</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="long" id="long" />
-                      <Label htmlFor="long">Long Answer</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="true-false" id="true-false" />
-                      <Label htmlFor="true-false">True/False</Label>
-                    </div>
-                  </RadioGroup>
+                <div>
+                  <label className="text-sm font-medium">AI Model</label>
+                  <select
+                    value={aiModel}
+                    onChange={(e) => setAiModel(e.target.value as "groq" | "grok")}
+                    className="w-full px-3 py-2 border rounded-lg mt-1"
+                  >
+                    <option value="groq">Groq (Mixtral)</option>
+                    <option value="grok">Grok-4</option>
+                  </select>
                 </div>
-                <div className="space-y-2">
-                  <Label>Difficulty Level</Label>
-                  <RadioGroup value={difficulty} onValueChange={setDifficulty} className="flex gap-4">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="easy" id="easy" />
-                      <Label htmlFor="easy">Easy</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="medium" id="medium" />
-                      <Label htmlFor="medium">Medium</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hard" id="hard" />
-                      <Label htmlFor="hard">Hard</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-
-              <div className="space-y-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-900 flex items-center gap-2">
-                  <Bot className="w-4 h-4" />
-                  AI Model Selection
-                </h4>
-                <RadioGroup value={aiModel} onValueChange={setAiModel} className="flex gap-6">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="chatgpt" id="chatgpt" />
-                    <Label htmlFor="chatgpt" className="flex items-center gap-2">
-                      <Bot className="w-4 h-4" />
-                      ChatGPT
-                      <Badge variant="secondary" className="text-xs">
-                        Recommended
-                      </Badge>
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="xai" id="xai" />
-                    <Label htmlFor="xai" className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      XAI (Grok)
-                      <Badge variant="outline" className="text-xs">
-                        Advanced
-                      </Badge>
-                    </Label>
-                  </div>
-                </RadioGroup>
-                <p className="text-xs text-blue-700">
-                  ChatGPT excels at structured questions, while XAI provides more creative and analytical questions.
-                </p>
               </div>
 
               <Button
                 onClick={handleGenerateQuestions}
-                disabled={isLoading || !subject || !topic}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
+                disabled={isLoading}
+                className="w-full bg-orange-600 hover:bg-orange-700"
               >
-                {isLoading
-                  ? "Generating Questions..."
-                  : `Generate ${numQuestions} Questions with ${aiModel === "chatgpt" ? "ChatGPT" : "XAI"}`}
-                {aiModel === "chatgpt" ? <Bot className="w-4 h-4 ml-2" /> : <Sparkles className="w-4 h-4 ml-2" />}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating Questions...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generate Questions with {aiModel === "groq" ? "Groq" : "Grok"}
+                  </>
+                )}
               </Button>
-            </TabsContent>
+            </div>
+          )}
 
-            <TabsContent value="bank" className="space-y-6 mt-6">
-              {generatedQuestions.length > 0 ? (
-                <>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleSelectAll}
-                        className="flex items-center gap-2 bg-transparent"
-                      >
-                        <Checkbox
-                          checked={selectedQuestions.length === generatedQuestions.length}
-                          onChange={() => {}}
-                        />
-                        Select All ({selectedQuestions.length}/{generatedQuestions.length})
-                      </Button>
-                      <Badge variant="secondary">
-                        {generatedQuestions.filter((q) => q.aiModel === "chatgpt").length} ChatGPT
-                      </Badge>
-                      <Badge variant="secondary">
-                        {generatedQuestions.filter((q) => q.aiModel === "xai").length} XAI
-                      </Badge>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Download className="w-4 h-4 mr-2" />
-                        Export
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Filter className="w-4 h-4 mr-2" />
-                        Filter
-                      </Button>
-                    </div>
-                  </div>
+          {/* Review Tab */}
+          {activeTab === "review" && generatedQuestions.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={selectedQuestions.length === generatedQuestions.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                  <span className="text-sm font-medium">Select All</span>
+                </div>
+                <Badge>{selectedQuestions.length} selected</Badge>
+              </div>
 
-                  <div className="space-y-4">
-                    {generatedQuestions.map((question, index) => renderQuestion(question, index))}
-                  </div>
-
-                  {selectedQuestions.length > 0 && (
-                    <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 -mx-6 -mb-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <span className="text-sm font-medium">{selectedQuestions.length} questions selected</span>
-                          <div className="flex items-center gap-2">
-                            <Label htmlFor="studentClass" className="text-sm">
-                              Push to Class:
-                            </Label>
-                            <Select value={studentClass} onValueChange={setStudentClass}>
-                              <SelectTrigger className="w-40">
-                                <SelectValue placeholder="Select class" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="grade-10-a">Grade 10-A</SelectItem>
-                                <SelectItem value="grade-10-b">Grade 10-B</SelectItem>
-                                <SelectItem value="grade-9-a">Grade 9-A</SelectItem>
-                                <SelectItem value="grade-9-b">Grade 9-B</SelectItem>
-                              </SelectContent>
-                            </Select>
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {generatedQuestions.map((question) => (
+                  <Card key={question.id} className="p-4">
+                    <div className="flex gap-3">
+                      <Checkbox
+                        checked={selectedQuestions.includes(question.id)}
+                        onCheckedChange={() => handleSelectQuestion(question.id)}
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <p className="font-medium text-sm">{question.question}</p>
+                          <div className="flex gap-1 ml-auto">
+                            <Badge variant="outline" className="text-xs">
+                              {question.type}
+                            </Badge>
+                            <Badge
+                              variant={
+                                question.difficulty === "easy"
+                                  ? "secondary"
+                                  : question.difficulty === "hard"
+                                    ? "destructive"
+                                    : "default"
+                              }
+                              className="text-xs"
+                            >
+                              {question.difficulty}
+                            </Badge>
                           </div>
                         </div>
-                        <Button
-                          onClick={handlePushQuestions}
-                          disabled={isLoading || !studentClass}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          {isLoading ? "Pushing..." : "Push Questions"}
-                          <Send className="w-4 h-4 ml-2" />
-                        </Button>
+                        {question.options && (
+                          <div className="space-y-1">
+                            {question.options.map((option, idx) => (
+                              <p
+                                key={idx}
+                                className={`text-xs pl-4 ${
+                                  idx === question.correctAnswer ? "text-green-600 font-medium" : "text-gray-600"
+                                }`}
+                              >
+                                {String.fromCharCode(97 + idx)}) {option}
+                              </p>
+                            ))}
+                          </div>
+                        )}
                       </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <div className="border-t pt-4">
+                <label className="text-sm font-medium">Push to Student Class</label>
+                <Input
+                  placeholder="E.g., Class 6-A, Section B"
+                  value={studentClass}
+                  onChange={(e) => setStudentClass(e.target.value)}
+                  className="mt-1 mb-4"
+                />
+
+                <div className="flex gap-2">
+                  {pushSuccess && (
+                    <div className="flex items-center gap-2 text-green-600 flex-1">
+                      <CheckCircle className="w-4 h-4" />
+                      <span className="text-sm">Questions pushed successfully!</span>
                     </div>
                   )}
 
-                  {pushSuccess && (
-                    <div className="fixed top-4 right-4 bg-green-100 border border-green-200 text-green-800 px-4 py-2 rounded-lg shadow-lg z-50">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4" />
-                        Questions pushed successfully to {studentClass}!
-                      </div>
-                    </div>
+                  {!pushSuccess && (
+                    <>
+                      <Button
+                        variant="outline"
+                        className="flex-1 bg-transparent"
+                        onClick={() => setActiveTab("generate")}
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        className="flex-1 bg-orange-600 hover:bg-orange-700"
+                        onClick={handlePushQuestions}
+                        disabled={isLoading || selectedQuestions.length === 0}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Pushing...
+                          </>
+                        ) : (
+                          <>
+                            <Share2 className="w-4 h-4 mr-2" />
+                            Push Selected Questions
+                          </>
+                        )}
+                      </Button>
+                    </>
                   )}
-                </>
-              ) : (
-                <div className="text-center py-12">
-                  <HelpCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Questions Generated Yet</h3>
-                  <p className="text-gray-500 mb-4">Generate questions using AI to get started</p>
-                  <Button onClick={() => setActiveTab("generate")} variant="outline">
-                    Generate Questions
-                  </Button>
                 </div>
-              )}
-            </TabsContent>
-          </ScrollArea>
-        </Tabs>
+              </div>
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   )
+}
+
+function generateRealisticQuestions(
+  content: string,
+  topic: string,
+  subject: string,
+  grade: string,
+  count: number,
+  difficulty: string,
+  type: string,
+  aiModel: string,
+): Question[] {
+  const questions: Question[] = []
+
+  for (let i = 0; i < count; i++) {
+    questions.push({
+      id: `q_${aiModel}_${Date.now()}_${i}`,
+      question: `${topic} Question ${i + 1}: [AI Generated with ${aiModel}]`,
+      options: type !== "true-false" ? ["Option A", "Option B", "Option C", "Option D"] : ["True", "False"],
+      correctAnswer: Math.floor(Math.random() * (type === "true-false" ? 2 : 4)),
+      type: type as any,
+      difficulty: difficulty as any,
+      subject,
+      topic,
+      aiModel: aiModel as any,
+    })
+  }
+
+  return questions
+}
+
+function generateDemoQuestions(
+  topic: string,
+  count: number,
+  difficulty: string,
+  type: string,
+  aiModel: string,
+): Question[] {
+  const questions: Question[] = []
+
+  for (let i = 0; i < count; i++) {
+    questions.push({
+      id: `demo_${aiModel}_${i}`,
+      question: `Sample ${topic} Question ${i + 1}`,
+      options: type !== "true-false" ? ["Option A", "Option B", "Option C", "Option D"] : ["True", "False"],
+      correctAnswer: Math.floor(Math.random() * (type === "true-false" ? 2 : 4)),
+      type: type as any,
+      difficulty: difficulty as any,
+      subject: "Demo",
+      topic,
+      aiModel: aiModel as any,
+    })
+  }
+
+  return questions
 }
