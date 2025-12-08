@@ -16,9 +16,10 @@ export default function PricingPage() {
       description: "Get started with Spark School AI",
       features: [
         { text: "Access to PAL Demo", included: true },
+        { text: "Diagnostic assessment", included: true },
         { text: "5 practice questions per day", included: true },
         { text: "Basic progress tracking", included: true },
-        { text: "Limited to Grade 4-5 content", included: true },
+        { text: "Limited grade content", included: true },
         { text: "Full curriculum access", included: false },
         { text: "Personalized learning paths", included: false },
         { text: "Performance analytics", included: false },
@@ -39,6 +40,7 @@ export default function PricingPage() {
         { text: "Real-time performance analytics", included: true },
         { text: "Video explanations", included: true },
         { text: "Multiple subjects access", included: false },
+        { text: "Priority support", included: false },
       ],
       cta: "Subscribe Now",
       highlighted: false,
@@ -56,6 +58,7 @@ export default function PricingPage() {
         { text: "Real-time performance analytics", included: true },
         { text: "Video explanations & notes", included: true },
         { text: "Misconception tracking", included: true },
+        { text: "Priority support", included: true },
       ],
       cta: "Subscribe Now",
       highlighted: true,
@@ -75,6 +78,7 @@ export default function PricingPage() {
         { text: "Unlimited classes", included: false },
         { text: "Advanced content generation", included: false },
         { text: "Student performance insights", included: false },
+        { text: "Google Classroom integration", included: false },
       ],
       cta: "Start Free",
       highlighted: false,
@@ -91,6 +95,7 @@ export default function PricingPage() {
         { text: "Advanced content generation", included: true },
         { text: "Real-time student analytics", included: true },
         { text: "Google Classroom integration", included: true },
+        { text: "Student misconception reports", included: true },
         { text: "Priority support", included: true },
       ],
       cta: "Subscribe Now",
@@ -100,64 +105,29 @@ export default function PricingPage() {
 
   const schoolPlans = [
     {
-      name: "Starter",
-      teachers: "5 Teachers",
-      students: "100 Students",
-      price: "₹14,999",
+      name: "Enterprise",
+      teachers: "10 Teachers",
+      grades: "10 Grades",
+      students: "300 Students",
+      price: "₹49,999",
       period: "/month",
-      description: "Perfect for small schools",
+      description: "Complete solution for schools",
       features: [
-        { text: "Up to 5 teacher accounts", included: true },
-        { text: "Up to 100 student accounts", included: true },
-        { text: "All teacher features", included: true },
-        { text: "Student learning paths", included: true },
-        { text: "Basic school analytics", included: true },
-        { text: "Email support", included: true },
-        { text: "Custom onboarding", included: false },
-        { text: "Dedicated account manager", included: false },
-      ],
-      cta: "Schedule Demo",
-      highlighted: false,
-    },
-    {
-      name: "Standard",
-      teachers: "25 Teachers",
-      students: "250 Students",
-      price: "₹29,999",
-      period: "/month",
-      description: "Most popular for schools",
-      features: [
-        { text: "Up to 25 teacher accounts", included: true },
-        { text: "Up to 250 student accounts", included: true },
-        { text: "All teacher features", included: true },
-        { text: "Complete learning journeys", included: true },
+        { text: "Up to 10 teacher accounts", included: true },
+        { text: "Up to 300 student accounts", included: true },
+        { text: "10 grades (1-12) curriculum", included: true },
+        { text: "All teacher features unlimited", included: true },
+        { text: "Complete PAL for all students", included: true },
         { text: "Advanced school analytics", included: true },
-        { text: "Priority email & phone support", included: true },
         { text: "Custom onboarding & training", included: true },
+        { text: "Google Classroom integration", included: true },
+        { text: "Dedicated account manager", included: true },
         { text: "Monthly performance reports", included: true },
+        { text: "API access for integrations", included: true },
+        { text: "SLA guarantees", included: true },
       ],
       cta: "Schedule Demo",
       highlighted: true,
-    },
-    {
-      name: "Enterprise",
-      teachers: "10+ Teachers",
-      students: "500+ Students",
-      price: "₹49,999+",
-      period: "/month",
-      description: "For large schools & districts",
-      features: [
-        { text: "Up to 10 teachers (expandable)", included: true },
-        { text: "Up to 500 students (expandable)", included: true },
-        { text: "All Standard features", included: true },
-        { text: "API access for integrations", included: true },
-        { text: "Custom reporting & dashboards", included: true },
-        { text: "Dedicated support team", included: true },
-        { text: "Custom feature development", included: true },
-        { text: "SLA guarantees", included: true },
-      ],
-      cta: "Contact Sales",
-      highlighted: false,
     },
   ]
 
@@ -323,36 +293,35 @@ export default function PricingPage() {
 
           {/* Schools Pricing */}
           <TabsContent value="schools" className="space-y-8">
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="max-w-2xl mx-auto">
               {schoolPlans.map((plan, idx) => (
                 <Card
                   key={idx}
-                  className={`relative transition-all duration-300 hover:shadow-lg ${
-                    plan.highlighted ? "border-blue-500 shadow-lg" : ""
-                  }`}
+                  className={`relative transition-all duration-300 hover:shadow-lg border-blue-500 shadow-lg`}
                 >
-                  {plan.highlighted && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      Most Popular
-                    </div>
-                  )}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    Best for Schools
+                  </div>
                   <CardHeader>
-                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                    <CardDescription className="space-y-1">
-                      <div className="flex justify-between text-sm">
+                    <CardTitle className="text-3xl">{plan.name}</CardTitle>
+                    <CardDescription className="space-y-2 mt-2">
+                      <div className="flex gap-4 text-sm font-medium text-gray-700">
                         <span>{plan.teachers}</span>
+                        <span>•</span>
                         <span>{plan.students}</span>
+                        <span>•</span>
+                        <span>{plan.grades}</span>
                       </div>
-                      <div className="text-xs text-gray-500">{plan.description}</div>
+                      <div className="text-base text-gray-600">{plan.description}</div>
                     </CardDescription>
-                    <div className="mt-4">
-                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <div className="mt-6">
+                      <span className="text-5xl font-bold text-gray-900">{plan.price}</span>
                       {plan.period && <span className="text-gray-600 ml-2">{plan.period}</span>}
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                      <Calendar className="w-4 h-4 mr-2" />
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg">
+                      <Calendar className="w-5 h-5 mr-2" />
                       {plan.cta}
                     </Button>
                     <div className="space-y-3">
@@ -363,13 +332,7 @@ export default function PricingPage() {
                           ) : (
                             <X className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5" />
                           )}
-                          <span
-                            className={
-                              feature.included ? "text-gray-900 text-sm" : "text-gray-400 text-sm line-through"
-                            }
-                          >
-                            {feature.text}
-                          </span>
+                          <span className="text-gray-900 text-sm">{feature.text}</span>
                         </div>
                       ))}
                     </div>
@@ -387,7 +350,7 @@ export default function PricingPage() {
             {[
               {
                 q: "Can I try Spark School AI for free?",
-                a: "Yes! All users can register for free and access demo features. Students get 5 daily questions, teachers get limited question generation, and schools can explore the platform with a trial.",
+                a: "Yes! All users can register for free and access demo features. Take the diagnostic assessment to understand your learning style and get started with PAL.",
               },
               {
                 q: "Do I need a credit card to start the free trial?",
@@ -406,8 +369,8 @@ export default function PricingPage() {
                 a: "No setup fees. We provide free onboarding and training for all school plans.",
               },
               {
-                q: "Do you offer discounts for annual billing?",
-                a: "Yes! Annual billing plans come with a 20% discount compared to monthly pricing.",
+                q: "How does the diagnostic assessment work?",
+                a: "The diagnostic assessment helps us understand your learning style, pace, and preferences. It takes about 15 minutes and provides personalized recommendations for your learning journey.",
               },
             ].map((item, idx) => (
               <div key={idx}>

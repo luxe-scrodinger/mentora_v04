@@ -16,7 +16,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
               <p className="text-gray-700 mb-4">
-                QubiLearn Technologies Private Limited ("we", "us", or "our") operates Mentora AI, an educational
+                QubiLearn Technologies Private Limited ("we", "us", or "our") operates Spark School AI, an educational
                 technology platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your
                 information when you use our Service.
               </p>
@@ -288,8 +288,8 @@ export default function PrivacyPage() {
               <ul className="list-none text-gray-700 space-y-2">
                 <li>
                   <strong>Privacy Officer:</strong>{" "}
-                  <a href="mailto:privacy@qubilearn.in" className="text-blue-600 hover:underline">
-                    privacy@qubilearn.in
+                  <a href="mailto:contact@sparkschool.ai" className="text-blue-600 hover:underline">
+                    contact@sparkschool.ai
                   </a>
                 </li>
                 <li>
@@ -308,7 +308,7 @@ export default function PrivacyPage() {
                   <strong>Company:</strong> QubiLearn Technologies Private Limited
                 </li>
                 <li>
-                  <strong>Address:</strong> Bangalore, Karnataka, India
+                  <strong>Address:</strong> Ahmedabad, Gujarat, India
                 </li>
               </ul>
             </section>

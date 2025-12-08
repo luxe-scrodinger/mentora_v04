@@ -16,9 +16,9 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Acceptance of Terms</h2>
               <p className="text-gray-700 mb-4">
-                By accessing and using Mentora AI (the "Service"), operated by QubiLearn Technologies Private Limited
-                ("Company", "we", "us", or "our"), you accept and agree to be bound by the terms and provision of this
-                agreement.
+                By accessing and using Spark School AI (the "Service"), operated by QubiLearn Technologies Private
+                Limited ("Company", "we", "us", or "our"), you accept and agree to be bound by the terms and provision
+                of this agreement.
               </p>
               <p className="text-gray-700 mb-4">
                 If you do not agree to abide by the above, please do not use this service. These Terms of Use apply to
@@ -29,7 +29,7 @@ export default function TermsPage() {
 
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Description of Service</h2>
-              <p className="text-gray-700 mb-4">Mentora AI is an educational technology platform that provides:</p>
+              <p className="text-gray-700 mb-4">Spark School AI is an educational technology platform that provides:</p>
               <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
                 <li>AI-powered personalized adaptive learning (PAL) systems</li>
                 <li>Educational content for grades 1-12 aligned with CBSE, ICSE, IB, and other curricula</li>
@@ -210,8 +210,8 @@ export default function TermsPage() {
               <ul className="list-none text-gray-700 space-y-2">
                 <li>
                   <strong>Email:</strong>{" "}
-                  <a href="mailto:hello@qubilearn.in" className="text-blue-600 hover:underline">
-                    hello@qubilearn.in
+                  <a href="mailto:contact@sparkschool.ai" className="text-blue-600 hover:underline">
+                    contact@sparkschool.ai
                   </a>
                 </li>
                 <li>
@@ -230,7 +230,7 @@ export default function TermsPage() {
                   <strong>Company:</strong> QubiLearn Technologies Private Limited
                 </li>
                 <li>
-                  <strong>Address:</strong> Bangalore, Karnataka, India
+                  <strong>Address:</strong> Ahmedabad, Gujarat, India
                 </li>
               </ul>
             </section>

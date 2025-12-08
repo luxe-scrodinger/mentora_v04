@@ -4,7 +4,7 @@ import type React from "react"
 
 import Link from "next/link"
 import { useState } from "react"
-import { Sparkles, Mail, Phone, MapPin, ArrowRight } from "lucide-react"
+import { Sparkles, Mail, MapPin, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -37,19 +37,13 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-slate-300">
                 <Mail className="w-4 h-4 text-blue-400" />
-                <a href="mailto:hello@sparkschool.ai" className="hover:text-white transition-colors">
-                  hello@sparkschool.ai
-                </a>
-              </div>
-              <div className="flex items-center gap-3 text-slate-300">
-                <Phone className="w-4 h-4 text-blue-400" />
-                <a href="tel:+919876543210" className="hover:text-white transition-colors">
-                  +91 98765 43210
+                <a href="mailto:contact@sparkschool.ai" className="hover:text-white transition-colors">
+                  contact@sparkschool.ai
                 </a>
               </div>
               <div className="flex items-center gap-3 text-slate-300">
                 <MapPin className="w-4 h-4 text-blue-400" />
-                <span>New Delhi, India</span>
+                <span>Ahmedabad, India</span>
               </div>
             </div>
           </div>
